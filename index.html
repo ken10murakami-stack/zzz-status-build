@@ -81,13 +81,11 @@
 
       <!-- HEADER ACTIONS -->
       <div class="flex flex-wrap items-center gap-2">
-        <!-- ディスク追加ボタン -->
         <button onclick="openDiskModal()" class="flex items-center gap-1.5 bg-zzz-cyan/10 hover:bg-zzz-cyan/20 border border-zzz-cyan/40 text-zzz-cyan px-3 py-1.5 rounded text-xs font-bold transition shadow-sm">
           <i data-lucide="disc" class="w-4 h-4"></i>
           <span>ディスク・装備追加管理</span>
         </button>
 
-        <!-- キャラ追加・管理ボタン (黄色) -->
         <button onclick="openCharModal()" class="flex items-center gap-1.5 bg-zzz-yellow hover:bg-zzz-yellowHover text-black px-3 py-1.5 rounded text-xs font-extrabold transition shadow-md shadow-zzz-yellow/10">
           <i data-lucide="user-plus" class="w-4 h-4"></i>
           <span>キャラ追加・管理</span>
@@ -131,11 +129,9 @@
           </div>
           
           <div class="flex flex-wrap items-center gap-2">
-            <!-- プリセット選択 -->
             <select id="char-select" onchange="applyCharPreset(this.value)" class="bg-zzz-card border border-zzz-border text-xs rounded px-2.5 py-1.5 text-zinc-200 focus:outline-none focus:border-zzz-yellow">
               <!-- JSで動的生成 -->
             </select>
-            <!-- 現在値を直接保存 -->
             <button onclick="saveCurrentAsCharPrompt()" class="flex items-center gap-1 text-xs bg-zzz-yellow/10 hover:bg-zzz-yellow/20 text-zzz-yellow border border-zzz-yellow/30 px-2 py-1.5 rounded transition font-medium">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>現在のキャラを保存</span>
@@ -146,7 +142,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-xs">
           <div>
             <label class="block text-zinc-400 mb-1">エージェント名</label>
-            <input type="text" id="char-name" value="星見雅" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-medium focus:border-zzz-yellow focus:outline-none">
+            <input type="text" id="char-name" value="カスタムエージェント" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-medium focus:border-zzz-yellow focus:outline-none">
           </div>
           <div>
             <label class="block text-zinc-400 mb-1">Lv60 基礎HP</label>
@@ -259,7 +255,6 @@
       <!-- STICKY RESULTS PANEL -->
       <div class="bg-zzz-panel border border-zzz-border rounded-xl p-5 shadow-xl sticky top-20 space-y-5">
         
-        <!-- HEADER OF PANEL -->
         <div class="flex items-center justify-between border-b border-zzz-border pb-3">
           <div>
             <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">RESULT DASHBOARD</span>
@@ -278,9 +273,7 @@
             <i data-lucide="layers" class="w-3.5 h-3.5 text-zzz-orange"></i>
             <span>発動中のセット効果</span>
           </div>
-          <div id="active-set-effects" class="space-y-1 text-xs">
-            <!-- JSで動的にセット効果リストを表示 -->
-          </div>
+          <div id="active-set-effects" class="space-y-1 text-xs"></div>
         </div>
 
         <!-- CONDITIONAL 4-SET TOGGLES -->
@@ -289,15 +282,12 @@
             <i data-lucide="toggle-left" class="w-3.5 h-3.5"></i>
             <span>4セット条件バフのON/OFF</span>
           </div>
-          <div id="four-set-toggles" class="space-y-1.5 text-xs">
-            <!-- 4枚一致時にチェックボックス出現 -->
-          </div>
+          <div id="four-set-toggles" class="space-y-1.5 text-xs"></div>
         </div>
 
         <!-- PRIMARY STATS DISPLAY -->
         <div class="space-y-3">
-          
-          <!-- ATTACK (HIGHLIGHTED) -->
+          <!-- ATTACK -->
           <div class="bg-gradient-to-r from-zzz-card to-zzz-panel border-l-4 border-l-zzz-yellow border border-zzz-border rounded-lg p-3">
             <div class="flex justify-between items-center text-xs text-zinc-400">
               <span class="font-bold">最終 攻撃力 (ATK)</span>
@@ -376,7 +366,6 @@
 
         </div>
 
-        <!-- FORMULA SUMMARY TIP -->
         <div class="bg-black/30 border border-zinc-800 rounded p-2.5 text-[11px] text-zinc-400 space-y-1">
           <div class="font-semibold text-zinc-300">💡 白値と緑値の計算公式</div>
           <div class="font-mono text-[10px] text-zinc-500">
@@ -393,7 +382,6 @@
   <!-- ================= MODAL: CHARACTER MANAGER ================= -->
   <div id="modal-char" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-zzz-panel border border-zzz-border rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-      <!-- Modal Header -->
       <div class="p-4 border-b border-zzz-border flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="user-cog" class="w-5 h-5 text-zzz-yellow"></i>
@@ -404,7 +392,6 @@
         </button>
       </div>
 
-      <!-- Modal Body (Scrollable) -->
       <div class="p-4 overflow-y-auto custom-scrollbar space-y-6 text-xs flex-1">
         
         <!-- Form to Add New Character -->
@@ -466,12 +453,9 @@
         <!-- Registered Character List -->
         <div>
           <h4 class="font-bold text-white mb-2 flex items-center justify-between">
-            <span>登録済みエージェント一覧</span>
-            <span class="text-zinc-500 text-[11px]">デフォルト & カスタム</span>
+            <span>登録済みエージェント一覧（全キャラ削除可能）</span>
           </h4>
-          <div id="custom-char-list" class="space-y-1.5">
-            <!-- JSで一覧描画 -->
-          </div>
+          <div id="custom-char-list" class="space-y-1.5"></div>
         </div>
 
       </div>
@@ -481,7 +465,6 @@
   <!-- ================= MODAL: DISK MANAGER ================= -->
   <div id="modal-disk" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-zzz-panel border border-zzz-border rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-      <!-- Modal Header -->
       <div class="p-4 border-b border-zzz-border flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="disc" class="w-5 h-5 text-zzz-cyan"></i>
@@ -492,10 +475,8 @@
         </button>
       </div>
 
-      <!-- Modal Body (Scrollable) -->
       <div class="p-4 overflow-y-auto custom-scrollbar space-y-6 text-xs flex-1">
         
-        <!-- Form to Add New Disk Set -->
         <div class="bg-zzz-card border border-zzz-border rounded-lg p-4 space-y-3">
           <h4 class="font-bold text-zzz-cyan flex items-center gap-1.5">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
@@ -513,7 +494,6 @@
             </div>
           </div>
 
-          <!-- 2-Set Bonus -->
           <div class="p-3 bg-zzz-dark/60 rounded border border-zzz-border space-y-2">
             <span class="text-[11px] font-bold text-zinc-300">【2セット効果】(常時ステータス反映)</span>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -541,7 +521,6 @@
             </div>
           </div>
 
-          <!-- 4-Set Bonus -->
           <div class="p-3 bg-zzz-dark/60 rounded border border-zzz-border space-y-2">
             <span class="text-[11px] font-bold text-zinc-300">【4セット効果】(条件付き発動バフ)</span>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -572,12 +551,9 @@
           </button>
         </div>
 
-        <!-- Registered Disk List -->
         <div>
-          <h4 class="font-bold text-white mb-2">登録済みディスクセット一覧</h4>
-          <div id="custom-disk-list" class="space-y-1.5">
-            <!-- JSで一覧描画 -->
-          </div>
+          <h4 class="font-bold text-white mb-2">登録済みディスクセット一覧（削除可能）</h4>
+          <div id="custom-disk-list" class="space-y-1.5"></div>
         </div>
 
       </div>
@@ -626,11 +602,11 @@
   <script>
     // --- 1. DEFAULT DATASETS ---
     const DEFAULT_PRESET_CHARS = [
-      { id: 'miyabi', name: '星見雅', hp: 7421, atk: 902, def: 608, critRate: 5.0, critDmg: 50.0, impact: 94, mastery: 94, prof: 94 },
-      { id: 'ellen', name: 'エレン・ジョー', hp: 7654, atk: 864, def: 598, critRate: 5.0, critDmg: 50.0, impact: 90, mastery: 90, prof: 90 },
-      { id: 'zhu_yuan', name: '朱鳶', hp: 7311, atk: 882, def: 602, critRate: 5.0, critDmg: 50.0, impact: 88, mastery: 88, prof: 88 },
-      { id: 'jane_doe', name: 'ジェーン・ドゥ', hp: 7520, atk: 840, def: 615, critRate: 5.0, critDmg: 50.0, impact: 92, mastery: 114, prof: 114 },
-      { id: 'qingyi', name: '青衣', hp: 7890, atk: 756, def: 640, critRate: 5.0, critDmg: 50.0, impact: 122, mastery: 85, prof: 85 }
+      { id: 'char_miyabi', name: '星見雅', hp: 7421, atk: 902, def: 608, critRate: 5.0, critDmg: 50.0, impact: 94, mastery: 94, prof: 94 },
+      { id: 'char_ellen', name: 'エレン・ジョー', hp: 7654, atk: 864, def: 598, critRate: 5.0, critDmg: 50.0, impact: 90, mastery: 90, prof: 90 },
+      { id: 'char_zhu_yuan', name: '朱鳶', hp: 7311, atk: 882, def: 602, critRate: 5.0, critDmg: 50.0, impact: 88, mastery: 88, prof: 88 },
+      { id: 'char_jane_doe', name: 'ジェーン・ドゥ', hp: 7520, atk: 840, def: 615, critRate: 5.0, critDmg: 50.0, impact: 92, mastery: 114, prof: 114 },
+      { id: 'char_qingyi', name: '青衣', hp: 7890, atk: 756, def: 640, critRate: 5.0, critDmg: 50.0, impact: 122, mastery: 85, prof: 85 }
     ];
 
     const DEFAULT_DISK_SETS = [
@@ -645,7 +621,6 @@
       { id: 'freedom_blues', name: 'フリーダム・ブルース', twoSet: 'anomaly_prof', twoSetValue: 30, twoDesc: '異常掌握 +30', fourSet: 'none', fourSetValue: 0, fourDesc: '強化特殊命中時 敵の異常耐性-20%' }
     ];
 
-    // SLOT VALID STATS
     const SLOT_CONFIGS = {
       1: { name: 'スロット 1 [HP固定]', mainStats: [{ type: 'flat_hp', name: 'HP実数', default: 2200 }] },
       2: { name: 'スロット 2 [ATK固定]', mainStats: [{ type: 'flat_atk', name: '攻撃力実数', default: 316 }] },
@@ -701,7 +676,7 @@
     // --- 2. STATE STORES ---
     let charList = [];
     let diskSets = [];
-    let enabledFourSetBuffs = {}; // { setId: boolean }
+    let enabledFourSetBuffs = {};
 
     // --- 3. INITIALIZATION ---
     function init() {
@@ -715,13 +690,23 @@
     }
 
     function loadStoredData() {
-      // Load custom chars
+      // キャラ読み込み: 保存データがあればそれを採用。なければデフォルトを初回保存。
       const storedChars = localStorage.getItem('zzz_custom_chars');
-      charList = storedChars ? JSON.parse(storedChars) : [...DEFAULT_PRESET_CHARS];
+      if (storedChars !== null) {
+        charList = JSON.parse(storedChars);
+      } else {
+        charList = [...DEFAULT_PRESET_CHARS];
+        localStorage.setItem('zzz_custom_chars', JSON.stringify(charList));
+      }
 
-      // Load custom disks
+      // ディスク読み込み: 保存データがあればそれを採用。なければデフォルトを初回保存。
       const storedDisks = localStorage.getItem('zzz_custom_disk_sets');
-      diskSets = storedDisks ? JSON.parse(storedDisks) : [...DEFAULT_DISK_SETS];
+      if (storedDisks !== null) {
+        diskSets = JSON.parse(storedDisks);
+      } else {
+        diskSets = [...DEFAULT_DISK_SETS];
+        localStorage.setItem('zzz_custom_disk_sets', JSON.stringify(diskSets));
+      }
     }
 
     // --- 4. DISK SLOTS RENDERING ---
@@ -732,9 +717,9 @@
       for (let slot = 1; slot <= 6; slot++) {
         const config = SLOT_CONFIGS[slot];
         
-        let setOptionsHtml = diskSets.map(s => 
-          `<option value="${s.id}">${s.name}</option>`
-        ).join('');
+        let setOptionsHtml = diskSets.length > 0 
+          ? diskSets.map(s => `<option value="${s.id}">${s.name}</option>`).join('')
+          : '<option value="">(ディスクなし)</option>';
 
         let mainStatOptionsHtml = config.mainStats.map(m => 
           `<option value="${m.type}" data-default="${m.default}">${m.name}</option>`
@@ -756,7 +741,6 @@
             </select>
           </div>
 
-          <!-- Main Stat -->
           <div class="bg-black/30 p-2 rounded border border-zinc-800 space-y-1">
             <div class="text-[10px] text-zinc-400 font-semibold">メインステータス</div>
             <div class="flex gap-2">
@@ -767,7 +751,6 @@
             </div>
           </div>
 
-          <!-- Sub Stats (4 inputs) -->
           <div class="space-y-1">
             <div class="text-[10px] text-zinc-400 font-semibold">サブステータス</div>
             <div class="grid grid-cols-2 gap-1.5">
@@ -799,7 +782,6 @@
 
     // --- 5. CALCULATION ENGINE ---
     function calculate() {
-      // 1. Base Stats
       const charBaseHp = parseFloat(document.getElementById('base-hp').value) || 0;
       const charBaseAtk = parseFloat(document.getElementById('base-atk').value) || 0;
       const charBaseDef = parseFloat(document.getElementById('base-def').value) || 0;
@@ -814,12 +796,10 @@
       const wengineBuffType = document.getElementById('wengine-buff-type').value;
       const wengineBuffVal = parseFloat(document.getElementById('wengine-buff-val').value) || 0;
 
-      // Base Attack Calculation
       const totalBaseAtk = charBaseAtk + wengineBaseAtk;
       const totalBaseHp = charBaseHp;
       const totalBaseDef = charBaseDef;
 
-      // Buff Collectors
       let atkRate = 0;
       let flatAtk = 0;
       let hpRate = 0;
@@ -835,7 +815,6 @@
       let flatPen = 0;
       let elementDmg = 0;
 
-      // Helper to apply buff
       function applyStat(type, val) {
         if (!type || !val || isNaN(val)) return;
         switch(type) {
@@ -856,22 +835,22 @@
         }
       }
 
-      // Add W-Engine Sub & Buff
       applyStat(wengineSubType, wengineSubVal);
       applyStat(wengineBuffType, wengineBuffVal);
 
-      // Collect Disk Sets & Disk Stats
       const setCounts = {};
       for (let slot = 1; slot <= 6; slot++) {
-        const setId = document.getElementById(`disk-set-${slot}`).value;
-        setCounts[setId] = (setCounts[setId] || 0) + 1;
+        const setSelect = document.getElementById(`disk-set-${slot}`);
+        if (!setSelect) continue;
+        const setId = setSelect.value;
+        if (setId) {
+          setCounts[setId] = (setCounts[setId] || 0) + 1;
+        }
 
-        // Main stat
         const mainType = document.getElementById(`disk-main-type-${slot}`).value;
         const mainVal = parseFloat(document.getElementById(`disk-main-val-${slot}`).value) || 0;
         applyStat(mainType, mainVal);
 
-        // Sub stats 1-4
         for (let subIdx = 1; subIdx <= 4; subIdx++) {
           const subType = document.getElementById(`disk-sub-type-${slot}-${subIdx}`).value;
           const subVal = parseFloat(document.getElementById(`disk-sub-val-${slot}-${subIdx}`).value) || 0;
@@ -879,7 +858,6 @@
         }
       }
 
-      // Process Set Bonuses (2-set & 4-set)
       const activeSetsContainer = document.getElementById('active-set-effects');
       const fourSetContainer = document.getElementById('four-set-toggles');
       const fourSetBox = document.getElementById('four-set-toggles-container');
@@ -891,7 +869,6 @@
         const setDef = diskSets.find(s => s.id === setId);
         if (!setDef) continue;
 
-        // 2-Set Bonus
         if (count >= 2) {
           applyStat(setDef.twoSet, setDef.twoSetValue);
           const badge = document.createElement('div');
@@ -900,7 +877,6 @@
           activeSetsContainer.appendChild(badge);
         }
 
-        // 4-Set Bonus
         if (count >= 4) {
           hasFourSet = true;
           const isEnabled = enabledFourSetBuffs[setId] ?? true;
@@ -922,7 +898,7 @@
         }
       }
 
-      if (Object.keys(setCounts).every(id => setCounts[id] < 2)) {
+      if (Object.keys(setCounts).length === 0 || Object.keys(setCounts).every(id => setCounts[id] < 2)) {
         activeSetsContainer.innerHTML = '<span class="text-zinc-500 italic">2セット以上の発動なし</span>';
       }
 
@@ -932,7 +908,6 @@
         fourSetBox.classList.add('hidden');
       }
 
-      // Final Math Calculations
       const finalAtk = Math.round(totalBaseAtk * (1 + atkRate / 100) + flatAtk);
       const bonusAtk = finalAtk - totalBaseAtk;
 
@@ -945,7 +920,6 @@
       const finalImpact = Math.round(charImpact * (1 + impactRate / 100));
       const finalMastery = Math.round(charMastery * (1 + anomalyMasteryRate / 100));
 
-      // UI Updates
       document.getElementById('res-final-atk').innerText = finalAtk.toLocaleString();
       document.getElementById('res-base-atk').innerText = Math.round(totalBaseAtk).toLocaleString();
       document.getElementById('res-bonus-atk').innerText = `+${bonusAtk.toLocaleString()}`;
@@ -964,7 +938,7 @@
       document.getElementById('res-crit-dmg').innerText = `${critDmg.toFixed(1)}%`;
 
       document.getElementById('res-impact').innerText = finalImpact;
-      document.getElementById('res-prof').innerText = (anomalyProf + 94); // standard base 94
+      document.getElementById('res-prof').innerText = (anomalyProf + 94);
       document.getElementById('res-mastery').innerText = finalMastery;
       document.getElementById('res-pen').innerText = `${penRatio.toFixed(1)}%`;
       document.getElementById('res-flat-pen').innerText = flatPen;
@@ -979,6 +953,10 @@
     // --- 6. PRESET & CHARACTER MANAGEMENT ---
     function renderCharSelectOptions() {
       const select = document.getElementById('char-select');
+      if (charList.length === 0) {
+        select.innerHTML = '<option value="">プリセットなし</option>';
+        return;
+      }
       select.innerHTML = '<option value="">プリセットを選択...</option>' + 
         charList.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
     }
@@ -1007,7 +985,7 @@
       if (!promptName || !promptName.trim()) return;
 
       const newChar = {
-        id: 'custom_' + Date.now(),
+        id: 'char_' + Date.now(),
         name: promptName.trim(),
         hp: parseFloat(document.getElementById('base-hp').value) || 0,
         atk: parseFloat(document.getElementById('base-atk').value) || 0,
@@ -1045,7 +1023,7 @@
       }
 
       const newChar = {
-        id: 'custom_' + Date.now(),
+        id: 'char_' + Date.now(),
         name: name,
         hp: parseFloat(document.getElementById('new-char-hp').value) || 0,
         atk: parseFloat(document.getElementById('new-char-atk').value) || 0,
@@ -1066,31 +1044,36 @@
       showToast(`「${name}」をプリセットに登録しました`);
     }
 
+    // 全てのキャラに削除ボタンを表示
     function renderCustomCharList() {
       const list = document.getElementById('custom-char-list');
-      list.innerHTML = charList.map(c => {
-        const isCustom = c.id.startsWith('custom_');
-        return `
-          <div class="flex items-center justify-between bg-zzz-dark p-2 rounded border border-zzz-border">
-            <div>
-              <span class="font-bold text-white">${c.name}</span>
-              <span class="text-[10px] text-zinc-400 font-mono ml-2">ATK ${c.atk} / HP ${c.hp} / 会心 ${c.critRate}%</span>
-            </div>
-            <div class="flex gap-2">
-              <button onclick="applyCharPreset('${c.id}'); closeCharModal();" class="text-[10px] bg-zzz-yellow/20 text-zzz-yellow hover:bg-zzz-yellow/30 px-2 py-0.5 rounded font-bold">適用</button>
-              ${isCustom ? `<button onclick="deleteCustomChar('${c.id}')" class="text-[10px] text-red-400 hover:text-red-300">削除</button>` : ''}
-            </div>
+      if (charList.length === 0) {
+        list.innerHTML = '<div class="text-zinc-500 text-center py-3">登録されているキャラクターはいません</div>';
+        return;
+      }
+      list.innerHTML = charList.map(c => `
+        <div class="flex items-center justify-between bg-zzz-dark p-2 rounded border border-zzz-border">
+          <div>
+            <span class="font-bold text-white">${c.name}</span>
+            <span class="text-[10px] text-zinc-400 font-mono ml-2">ATK ${c.atk} / HP ${c.hp} / 会心 ${c.critRate}%</span>
           </div>
-        `;
-      }).join('');
+          <div class="flex items-center gap-2">
+            <button onclick="applyCharPreset('${c.id}'); closeCharModal();" class="text-[10px] bg-zzz-yellow/20 text-zzz-yellow hover:bg-zzz-yellow/30 px-2 py-0.5 rounded font-bold transition">適用</button>
+            <button onclick="deleteCustomChar('${c.id}')" class="text-[10px] bg-red-950/40 border border-red-800/50 text-red-400 hover:bg-red-900/50 px-2 py-0.5 rounded transition">削除</button>
+          </div>
+        </div>
+      `).join('');
     }
 
     function deleteCustomChar(id) {
-      if (!confirm('このキャラクタープリセットを削除しますか？')) return;
+      const target = charList.find(c => c.id === id);
+      const name = target ? target.name : 'このキャラクター';
+      if (!confirm(`「${name}」を一覧から削除しますか？`)) return;
       charList = charList.filter(c => c.id !== id);
       localStorage.setItem('zzz_custom_chars', JSON.stringify(charList));
       renderCharSelectOptions();
       renderCustomCharList();
+      showToast(`「${name}」を削除しました`);
     }
 
     // --- 7. DISK MANAGEMENT ---
@@ -1126,29 +1109,34 @@
       showToast(`「${name}」をディスク一覧に追加しました`);
     }
 
+    // 全てのディスクセットに削除ボタンを表示
     function renderCustomDiskList() {
       const list = document.getElementById('custom-disk-list');
-      list.innerHTML = diskSets.map(s => {
-        const isCustom = !DEFAULT_DISK_SETS.some(def => def.id === s.id);
-        return `
-          <div class="flex items-center justify-between bg-zzz-dark p-2 rounded border border-zzz-border">
-            <div>
-              <span class="font-bold text-white">${s.name}</span>
-              <span class="text-[10px] text-zinc-400 font-mono ml-2">[2] ${s.twoDesc}</span>
-            </div>
-            ${isCustom ? `<button onclick="deleteCustomDisk('${s.id}')" class="text-[10px] text-red-400 hover:text-red-300">削除</button>` : '<span class="text-[10px] text-zinc-600">デフォルト</span>'}
+      if (diskSets.length === 0) {
+        list.innerHTML = '<div class="text-zinc-500 text-center py-3">登録されているディスクセットはありません</div>';
+        return;
+      }
+      list.innerHTML = diskSets.map(s => `
+        <div class="flex items-center justify-between bg-zzz-dark p-2 rounded border border-zzz-border">
+          <div>
+            <span class="font-bold text-white">${s.name}</span>
+            <span class="text-[10px] text-zinc-400 font-mono ml-2">[2] ${s.twoDesc}</span>
           </div>
-        `;
-      }).join('');
+          <button onclick="deleteCustomDisk('${s.id}')" class="text-[10px] bg-red-950/40 border border-red-800/50 text-red-400 hover:bg-red-900/50 px-2 py-0.5 rounded transition">削除</button>
+        </div>
+      `).join('');
     }
 
     function deleteCustomDisk(id) {
-      if (!confirm('このディスクセットを削除しますか？')) return;
+      const target = diskSets.find(s => s.id === id);
+      const name = target ? target.name : 'このディスクセット';
+      if (!confirm(`「${name}」を削除しますか？`)) return;
       diskSets = diskSets.filter(s => s.id !== id);
       localStorage.setItem('zzz_custom_disk_sets', JSON.stringify(diskSets));
       renderDiskSlots();
       renderCustomDiskList();
       calculate();
+      showToast(`「${name}」を削除しました`);
     }
 
     // --- 8. STORAGE & BUILD SAVING ---
@@ -1179,7 +1167,15 @@
 
     function resetAll() {
       if (!confirm('入力内容を初期状態にリセットしますか？')) return;
-      applyCharPreset('miyabi');
+      document.getElementById('char-name').value = 'カスタムエージェント';
+      document.getElementById('base-hp').value = '7421';
+      document.getElementById('base-atk').value = '902';
+      document.getElementById('base-def').value = '608';
+      document.getElementById('base-crit-rate').value = '5.0';
+      document.getElementById('base-crit-dmg').value = '50.0';
+      document.getElementById('base-impact').value = '94';
+      document.getElementById('base-mastery').value = '94';
+
       document.getElementById('wengine-name').value = '深淵のプレリュード';
       document.getElementById('wengine-base-atk').value = '713';
       document.getElementById('wengine-sub-type').value = 'atk_rate';
@@ -1210,7 +1206,6 @@
       }, 2500);
     }
 
-    // Run on load
     window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
