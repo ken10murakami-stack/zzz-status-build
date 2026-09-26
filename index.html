@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZZZ STAT LAB - ゼンレスゾーンゼロ ステータス計算機</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            zzz: {
+              yellow: '#FCEE0A',
+              yellowHover: '#E5D809',
+              dark: '#0e1015',
+              panel: '#151821',
+              card: '#1c202c',
+              border: '#2a3042',
+              cyan: '#00f0ff',
+              green: '#22c55e',
+              orange: '#f97316'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0c0e14;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #151821;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #2a3042;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #3b445c;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col custom-scrollbar">
+
+  <!-- ================= HEADER ================= -->
+  <header class="border-b border-zzz-border bg-zzz-dark/95 sticky top-0 z-40 backdrop-blur px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- LOGO -->
+      <div class="flex items-center gap-3">
+        <div class="bg-zzz-yellow text-black font-black text-xl px-2.5 py-1 rounded shadow-lg shadow-zzz-yellow/20 tracking-wider">
+          ZZZ
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg tracking-wide text-white">NEW ERIDU STAT LAB</h1>
+            <span class="text-[10px] font-bold bg-zzz-yellow/10 text-zzz-yellow border border-zzz-yellow/30 px-1.5 py-0.5 rounded">BUILD SIMULATOR</span>
+          </div>
+          <p class="text-xs text-zinc-400">ディスク＆音動機カスタムステータス計算機</p>
+        </div>
+      </div>
+
+      <!-- HEADER ACTIONS -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- ディスク追加ボタン -->
+        <button onclick="openDiskModal()" class="flex items-center gap-1.5 bg-zzz-cyan/10 hover:bg-zzz-cyan/20 border border-zzz-cyan/40 text-zzz-cyan px-3 py-1.5 rounded text-xs font-bold transition shadow-sm">
+          <i data-lucide="disc" class="w-4 h-4"></i>
+          <span>ディスク・装備追加管理</span>
+        </button>
+
+        <!-- キャラ追加・管理ボタン (黄色) -->
+        <button onclick="openCharModal()" class="flex items-center gap-1.5 bg-zzz-yellow hover:bg-zzz-yellowHover text-black px-3 py-1.5 rounded text-xs font-extrabold transition shadow-md shadow-zzz-yellow/10">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>キャラ追加・管理</span>
+        </button>
+
+        <button onclick="openFormulaModal()" class="flex items-center gap-1 bg-zzz-panel hover:bg-zzz-card border border-zzz-border text-zinc-300 px-3 py-1.5 rounded text-xs transition">
+          <i data-lucide="info" class="w-4 h-4"></i>
+          <span>計算式</span>
+        </button>
+        <button onclick="saveBuildToStorage()" class="flex items-center gap-1 bg-zzz-panel hover:bg-zzz-card border border-zzz-border text-zinc-300 px-3 py-1.5 rounded text-xs transition">
+          <i data-lucide="save" class="w-4 h-4"></i>
+          <span>保存</span>
+        </button>
+        <button onclick="resetAll()" class="flex items-center gap-1 bg-red-950/40 hover:bg-red-900/50 border border-red-800/50 text-red-300 px-3 py-1.5 rounded text-xs transition">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span>リセット</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= NOTIFICATION TOAST ================= -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-zzz-panel border border-zzz-yellow text-white text-xs px-4 py-3 rounded-lg shadow-2xl flex items-center gap-2 pointer-events-none">
+    <i data-lucide="check-circle" class="w-4 h-4 text-zzz-yellow"></i>
+    <span id="toast-msg">保存しました</span>
+  </div>
+
+  <!-- ================= MAIN LAYOUT ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT & CENTER: INPUTS (8 COLS) -->
+    <div class="lg:col-span-8 space-y-6">
+
+      <!-- SECTION 1: CHARACTER BASE -->
+      <section class="bg-zzz-panel border border-zzz-border rounded-xl p-4 lg:p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between pb-3 mb-4 border-b border-zzz-border gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-4 bg-zzz-yellow rounded-sm"></span>
+            <h2 class="text-sm font-bold text-white tracking-wide">1. エージェント（キャラ）基礎データ</h2>
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- プリセット選択 -->
+            <select id="char-select" onchange="applyCharPreset(this.value)" class="bg-zzz-card border border-zzz-border text-xs rounded px-2.5 py-1.5 text-zinc-200 focus:outline-none focus:border-zzz-yellow">
+              <!-- JSで動的生成 -->
+            </select>
+            <!-- 現在値を直接保存 -->
+            <button onclick="saveCurrentAsCharPrompt()" class="flex items-center gap-1 text-xs bg-zzz-yellow/10 hover:bg-zzz-yellow/20 text-zzz-yellow border border-zzz-yellow/30 px-2 py-1.5 rounded transition font-medium">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>現在のキャラを保存</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-zinc-400 mb-1">エージェント名</label>
+            <input type="text" id="char-name" value="星見雅" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-medium focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">Lv60 基礎HP</label>
+            <input type="number" id="base-hp" value="7421" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">Lv60 基礎攻撃力 (白値)</label>
+            <input type="number" id="base-atk" value="902" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-yellow/50 rounded px-2 py-1.5 text-zzz-yellow font-mono font-bold focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">Lv60 基礎防御力</label>
+            <input type="number" id="base-def" value="608" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">基礎 会心率 (%)</label>
+            <input type="number" step="0.1" id="base-crit-rate" value="5.0" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">基礎 会心ダメ (%)</label>
+            <input type="number" step="0.1" id="base-crit-dmg" value="50.0" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">基礎 衝撃力</label>
+            <input type="number" id="base-impact" value="94" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">基礎 異常マスタリー</label>
+            <input type="number" id="base-mastery" value="94" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: W-ENGINE -->
+      <section class="bg-zzz-panel border border-zzz-border rounded-xl p-4 lg:p-5 shadow-sm">
+        <div class="flex items-center gap-2 pb-3 mb-4 border-b border-zzz-border">
+          <span class="w-2 h-4 bg-zzz-cyan rounded-sm"></span>
+          <h2 class="text-sm font-bold text-white tracking-wide">2. 音動機 (W-Engine) 設定</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-zinc-400 mb-1">音動機名</label>
+            <input type="text" id="wengine-name" value="深淵のプレリュード" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white focus:border-zzz-cyan focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">Lv60 基礎攻撃力 (加算白値)</label>
+            <input type="number" id="wengine-base-atk" value="713" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-cyan/50 rounded px-2 py-1.5 text-zzz-cyan font-mono font-bold focus:border-zzz-cyan focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">上級ステータス (種別)</label>
+            <select id="wengine-sub-type" onchange="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white focus:border-zzz-cyan focus:outline-none">
+              <option value="crit_rate">会心率 (%)</option>
+              <option value="crit_dmg">会心ダメージ (%)</option>
+              <option value="atk_rate" selected>攻撃力 (%)</option>
+              <option value="pen_ratio">貫通率 (%)</option>
+              <option value="impact_rate">衝撃力 (%)</option>
+              <option value="anomaly_prof">異常掌握</option>
+              <option value="energy_regen">エネルギー自動回復 (%)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">上級ステータス値</label>
+            <input type="number" step="0.1" id="wengine-sub-val" value="30.0" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-cyan focus:outline-none">
+          </div>
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-zzz-border/60 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block text-zinc-400 mb-1">音動機バフ効果（常時・パッシブ）%</label>
+            <div class="flex gap-2">
+              <select id="wengine-buff-type" onchange="calculate()" class="w-1/2 bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white focus:border-zzz-cyan focus:outline-none">
+                <option value="atk_rate">攻撃力 (%)</option>
+                <option value="element_dmg" selected>属性ダメージ (%)</option>
+                <option value="crit_rate">会心率 (%)</option>
+                <option value="crit_dmg">会心ダメージ (%)</option>
+                <option value="pen_ratio">貫通率 (%)</option>
+              </select>
+              <input type="number" step="0.1" id="wengine-buff-val" value="25.0" oninput="calculate()" placeholder="値" class="w-1/2 bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-cyan focus:outline-none">
+            </div>
+          </div>
+          <div class="flex items-end">
+            <span class="text-[11px] text-zinc-500 italic pb-1.5">※ 音動機主ステータスの基礎攻撃力は、キャラ基礎ATKと合算されてすべてのATK%計算の基準となります。</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: DRIVER DISKS (SLOTS 1-6) -->
+      <section class="bg-zzz-panel border border-zzz-border rounded-xl p-4 lg:p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between pb-3 mb-4 border-b border-zzz-border gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-4 bg-zzz-orange rounded-sm"></span>
+            <h2 class="text-sm font-bold text-white tracking-wide">3. ドライバディスク装備 (スロット 1〜6)</h2>
+          </div>
+          <button onclick="openDiskModal()" class="text-xs text-zzz-cyan hover:underline flex items-center gap-1 font-medium">
+            <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+            <span>ディスク効果を新規追加/編集</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="disks-container">
+          <!-- 6枚のスロットをJSでレンダリング -->
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT: STATS SUMMARY & REALTIME CALCULATIONS (4 COLS) -->
+    <div class="lg:col-span-4 space-y-5">
+      
+      <!-- STICKY RESULTS PANEL -->
+      <div class="bg-zzz-panel border border-zzz-border rounded-xl p-5 shadow-xl sticky top-20 space-y-5">
+        
+        <!-- HEADER OF PANEL -->
+        <div class="flex items-center justify-between border-b border-zzz-border pb-3">
+          <div>
+            <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">RESULT DASHBOARD</span>
+            <h3 class="text-base font-extrabold text-white flex items-center gap-1.5">
+              <span>総合ステータス反映値</span>
+            </h3>
+          </div>
+          <div class="bg-zzz-yellow/20 text-zzz-yellow border border-zzz-yellow/40 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
+            Lv.60
+          </div>
+        </div>
+
+        <!-- ACTIVE SET BONUSES -->
+        <div class="bg-zzz-card border border-zzz-border rounded-lg p-3 space-y-2">
+          <div class="text-[11px] font-bold text-zinc-400 flex items-center gap-1">
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-zzz-orange"></i>
+            <span>発動中のセット効果</span>
+          </div>
+          <div id="active-set-effects" class="space-y-1 text-xs">
+            <!-- JSで動的にセット効果リストを表示 -->
+          </div>
+        </div>
+
+        <!-- CONDITIONAL 4-SET TOGGLES -->
+        <div id="four-set-toggles-container" class="hidden bg-zzz-card border border-zzz-border rounded-lg p-3 space-y-2">
+          <div class="text-[11px] font-bold text-zzz-cyan flex items-center gap-1">
+            <i data-lucide="toggle-left" class="w-3.5 h-3.5"></i>
+            <span>4セット条件バフのON/OFF</span>
+          </div>
+          <div id="four-set-toggles" class="space-y-1.5 text-xs">
+            <!-- 4枚一致時にチェックボックス出現 -->
+          </div>
+        </div>
+
+        <!-- PRIMARY STATS DISPLAY -->
+        <div class="space-y-3">
+          
+          <!-- ATTACK (HIGHLIGHTED) -->
+          <div class="bg-gradient-to-r from-zzz-card to-zzz-panel border-l-4 border-l-zzz-yellow border border-zzz-border rounded-lg p-3">
+            <div class="flex justify-between items-center text-xs text-zinc-400">
+              <span class="font-bold">最終 攻撃力 (ATK)</span>
+              <span class="text-[11px] text-zinc-500 font-mono">白値 + 加算値</span>
+            </div>
+            <div class="flex items-baseline justify-between mt-1">
+              <div class="text-2xl font-black text-white font-mono" id="res-final-atk">0</div>
+              <div class="text-xs font-mono text-zinc-400">
+                <span class="text-white" id="res-base-atk">0</span>
+                <span class="text-zzz-yellow font-bold" id="res-bonus-atk">+0</span>
+              </div>
+            </div>
+            <div class="text-[10px] text-zinc-400 mt-1 flex justify-between font-mono border-t border-zzz-border/50 pt-1">
+              <span>ATK%: <span id="res-atk-rate" class="text-zinc-200">0%</span></span>
+              <span>固定ATK: <span id="res-flat-atk" class="text-zinc-200">+0</span></span>
+            </div>
+          </div>
+
+          <!-- HP & DEF -->
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-zzz-card border border-zzz-border rounded-lg p-2.5">
+              <div class="text-zinc-400 text-[11px]">最終 HP</div>
+              <div class="text-lg font-bold text-white font-mono mt-0.5" id="res-final-hp">0</div>
+              <div class="text-[10px] text-zinc-500 font-mono">
+                <span id="res-base-hp">0</span> <span id="res-bonus-hp" class="text-green-400">+0</span>
+              </div>
+            </div>
+            <div class="bg-zzz-card border border-zzz-border rounded-lg p-2.5">
+              <div class="text-zinc-400 text-[11px]">最終 防御力 (DEF)</div>
+              <div class="text-lg font-bold text-white font-mono mt-0.5" id="res-final-def">0</div>
+              <div class="text-[10px] text-zinc-500 font-mono">
+                <span id="res-base-def">0</span> <span id="res-bonus-def" class="text-green-400">+0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CRIT STATS -->
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-zzz-card border border-zzz-border rounded-lg p-2.5">
+              <div class="text-zinc-400 text-[11px]">会心率</div>
+              <div class="text-lg font-bold text-zzz-yellow font-mono mt-0.5" id="res-crit-rate">0.0%</div>
+            </div>
+            <div class="bg-zzz-card border border-zzz-border rounded-lg p-2.5">
+              <div class="text-zinc-400 text-[11px]">会心ダメージ</div>
+              <div class="text-lg font-bold text-orange-400 font-mono mt-0.5" id="res-crit-dmg">0.0%</div>
+            </div>
+          </div>
+
+          <!-- OTHER COMBAT STATS -->
+          <div class="bg-zzz-card border border-zzz-border rounded-lg p-3 space-y-1.5 text-xs font-mono">
+            <div class="flex justify-between items-center">
+              <span class="text-zinc-400">衝撃力 (ブレイク値)</span>
+              <span class="font-bold text-white" id="res-impact">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-zinc-400">異常掌握</span>
+              <span class="font-bold text-white" id="res-prof">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-zinc-400">異常マスタリー</span>
+              <span class="font-bold text-white" id="res-mastery">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-zinc-400">貫通率</span>
+              <span class="font-bold text-white" id="res-pen">0.0%</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-zinc-400">貫通値</span>
+              <span class="font-bold text-white" id="res-flat-pen">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-zinc-400">属性ダメージボーナス</span>
+              <span class="font-bold text-zzz-cyan" id="res-element-dmg">+0.0%</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- FORMULA SUMMARY TIP -->
+        <div class="bg-black/30 border border-zinc-800 rounded p-2.5 text-[11px] text-zinc-400 space-y-1">
+          <div class="font-semibold text-zinc-300">💡 白値と緑値の計算公式</div>
+          <div class="font-mono text-[10px] text-zinc-500">
+            最終ATK = (キャラ白値 + 音動機白値) × (1 + ATK%) + 実数ATK
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ================= MODAL: CHARACTER MANAGER ================= -->
+  <div id="modal-char" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-zzz-panel border border-zzz-border rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-zzz-border flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="user-cog" class="w-5 h-5 text-zzz-yellow"></i>
+          <h3 class="text-sm font-bold text-white">エージェント（キャラ）プリセット追加・管理</h3>
+        </div>
+        <button onclick="closeCharModal()" class="text-zinc-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-4 overflow-y-auto custom-scrollbar space-y-6 text-xs flex-1">
+        
+        <!-- Form to Add New Character -->
+        <div class="bg-zzz-card border border-zzz-border rounded-lg p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-zzz-yellow flex items-center gap-1.5">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>新規キャラクターの登録</span>
+            </h4>
+            <button onclick="copyCurrentInputsToCharForm()" class="text-[11px] text-zinc-400 hover:text-zzz-yellow underline">
+              現在の計算機数値をフォームに自動入力
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div class="col-span-2">
+              <label class="block text-zinc-400 mb-1">キャラクター名</label>
+              <input type="text" id="new-char-name" placeholder="例: ライカン, 柳" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">Lv60 基礎HP</label>
+              <input type="number" id="new-char-hp" value="7500" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">Lv60 基礎ATK (白値)</label>
+              <input type="number" id="new-char-atk" value="880" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">Lv60 基礎DEF</label>
+              <input type="number" id="new-char-def" value="600" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">会心率 (%)</label>
+              <input type="number" step="0.1" id="new-char-crit-rate" value="5.0" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">会心ダメージ (%)</label>
+              <input type="number" step="0.1" id="new-char-crit-dmg" value="50.0" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">基礎 衝撃力</label>
+              <input type="number" id="new-char-impact" value="90" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">異常マスタリー</label>
+              <input type="number" id="new-char-mastery" value="90" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">異常掌握</label>
+              <input type="number" id="new-char-prof" value="90" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+          </div>
+
+          <button onclick="registerNewChar()" class="w-full bg-zzz-yellow hover:bg-zzz-yellowHover text-black font-extrabold py-2 rounded text-xs transition mt-2">
+            キャラプリセットを登録
+          </button>
+        </div>
+
+        <!-- Registered Character List -->
+        <div>
+          <h4 class="font-bold text-white mb-2 flex items-center justify-between">
+            <span>登録済みエージェント一覧</span>
+            <span class="text-zinc-500 text-[11px]">デフォルト & カスタム</span>
+          </h4>
+          <div id="custom-char-list" class="space-y-1.5">
+            <!-- JSで一覧描画 -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: DISK MANAGER ================= -->
+  <div id="modal-disk" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-zzz-panel border border-zzz-border rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-zzz-border flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="disc" class="w-5 h-5 text-zzz-cyan"></i>
+          <h3 class="text-sm font-bold text-white">ドライバディスク・セット効果追加管理</h3>
+        </div>
+        <button onclick="closeDiskModal()" class="text-zinc-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-4 overflow-y-auto custom-scrollbar space-y-6 text-xs flex-1">
+        
+        <!-- Form to Add New Disk Set -->
+        <div class="bg-zzz-card border border-zzz-border rounded-lg p-4 space-y-3">
+          <h4 class="font-bold text-zzz-cyan flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>新規ディスクセットの登録</span>
+          </h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-zinc-400 mb-1">セット名</label>
+              <input type="text" id="new-disk-name" placeholder="例: 極地ヘヴィメタル" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">セットID (半角英数)</label>
+              <input type="text" id="new-disk-id" placeholder="例: polar_metal" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+          </div>
+
+          <!-- 2-Set Bonus -->
+          <div class="p-3 bg-zzz-dark/60 rounded border border-zzz-border space-y-2">
+            <span class="text-[11px] font-bold text-zinc-300">【2セット効果】(常時ステータス反映)</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div>
+                <label class="block text-zinc-500 mb-1">反映ステータス</label>
+                <select id="new-disk-2s-stat" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white">
+                  <option value="atk_rate">攻撃力 (%)</option>
+                  <option value="crit_rate">会心率 (%)</option>
+                  <option value="crit_dmg">会心ダメージ (%)</option>
+                  <option value="pen_ratio">貫通率 (%)</option>
+                  <option value="element_dmg">属性ダメージ (%)</option>
+                  <option value="impact_rate">衝撃力 (%)</option>
+                  <option value="anomaly_prof">異常掌握</option>
+                  <option value="energy_regen">エネルギー自動回復 (%)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-zinc-500 mb-1">上昇値 (数値)</label>
+                <input type="number" step="0.1" id="new-disk-2s-val" placeholder="例: 10" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-zinc-500 mb-1">説明ラベル</label>
+                <input type="text" id="new-disk-2s-desc" placeholder="例: 氷属性ダメージ +10%" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white">
+              </div>
+            </div>
+          </div>
+
+          <!-- 4-Set Bonus -->
+          <div class="p-3 bg-zzz-dark/60 rounded border border-zzz-border space-y-2">
+            <span class="text-[11px] font-bold text-zinc-300">【4セット効果】(条件付き発動バフ)</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div>
+                <label class="block text-zinc-500 mb-1">発動時ステータス</label>
+                <select id="new-disk-4s-stat" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white">
+                  <option value="none">特殊効果 (数値計算なし)</option>
+                  <option value="atk_rate">攻撃力 (%)</option>
+                  <option value="crit_rate">会心率 (%)</option>
+                  <option value="crit_dmg">会心ダメージ (%)</option>
+                  <option value="element_dmg">属性ダメージ (%)</option>
+                  <option value="pen_ratio">貫通率 (%)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-zinc-500 mb-1">上昇値 (数値)</label>
+                <input type="number" step="0.1" id="new-disk-4s-val" placeholder="例: 20" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-zinc-500 mb-1">条件説明</label>
+                <input type="text" id="new-disk-4s-desc" placeholder="例: 氷結付与時 攻撃力+20%" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white">
+              </div>
+            </div>
+          </div>
+
+          <button onclick="registerNewDiskSet()" class="w-full bg-zzz-cyan hover:bg-zzz-cyan/90 text-black font-extrabold py-2 rounded text-xs transition mt-2">
+            ディスクセットを登録
+          </button>
+        </div>
+
+        <!-- Registered Disk List -->
+        <div>
+          <h4 class="font-bold text-white mb-2">登録済みディスクセット一覧</h4>
+          <div id="custom-disk-list" class="space-y-1.5">
+            <!-- JSで一覧描画 -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: FORMULA EXPLANATION ================= -->
+  <div id="modal-formula" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-zzz-panel border border-zzz-border rounded-xl max-w-xl w-full max-h-[85vh] flex flex-col shadow-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-zzz-border pb-3">
+        <h3 class="font-bold text-white text-sm flex items-center gap-2">
+          <i data-lucide="calculator" class="w-4 h-4 text-zzz-yellow"></i>
+          <span>ゼンゼロ公式ステータス計算ロジック</span>
+        </h3>
+        <button onclick="closeFormulaModal()" class="text-zinc-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="text-xs space-y-3 text-zinc-300 leading-relaxed overflow-y-auto custom-scrollbar">
+        <div class="bg-zzz-dark p-3 rounded border border-zzz-border">
+          <div class="font-bold text-zzz-yellow mb-1">1. 基礎ステータス（白値）の決定</div>
+          <p>基礎攻撃力は「キャラクターの基礎ATK ＋ 音動機の基礎ATK」のみが合算されます。HPと防御力はキャラクター本体の基礎値のみが白値となります。</p>
+        </div>
+
+        <div class="bg-zzz-dark p-3 rounded border border-zzz-border">
+          <div class="font-bold text-zzz-cyan mb-1">2. 割合バフ（%）と実数バフ（固定値）の適用順</div>
+          <p class="font-mono text-zinc-200 bg-black/40 p-2 rounded mb-2">
+            最終攻撃力 = 基礎攻撃力 × (1 + 攻撃力%の合計) + 実数攻撃力合計
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-zinc-400">
+            <li>ディスク[2]枠のメインステータス「攻撃力+316」などは、%乗算の後にそのまま足されます。</li>
+            <li>音動機の上級ステータスやディスクのサブステータスにある「攻撃力+9%」などは加算されてから白値に乗算されます。</li>
+          </ul>
+        </div>
+
+        <div class="bg-zzz-dark p-3 rounded border border-zzz-border">
+          <div class="font-bold text-orange-400 mb-1">3. ディスクのメインステ枠の固定仕様</div>
+          <p>[1]枠はHP実数固定、[2]枠はATK実数固定、[3]枠はDEF実数固定です。[4][5][6]枠のみ、会心率や属性ダメ、衝撃力などの特化ステータスを選択できます。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    // --- 1. DEFAULT DATASETS ---
+    const DEFAULT_PRESET_CHARS = [
+      { id: 'miyabi', name: '星見雅', hp: 7421, atk: 902, def: 608, critRate: 5.0, critDmg: 50.0, impact: 94, mastery: 94, prof: 94 },
+      { id: 'ellen', name: 'エレン・ジョー', hp: 7654, atk: 864, def: 598, critRate: 5.0, critDmg: 50.0, impact: 90, mastery: 90, prof: 90 },
+      { id: 'zhu_yuan', name: '朱鳶', hp: 7311, atk: 882, def: 602, critRate: 5.0, critDmg: 50.0, impact: 88, mastery: 88, prof: 88 },
+      { id: 'jane_doe', name: 'ジェーン・ドゥ', hp: 7520, atk: 840, def: 615, critRate: 5.0, critDmg: 50.0, impact: 92, mastery: 114, prof: 114 },
+      { id: 'qingyi', name: '青衣', hp: 7890, atk: 756, def: 640, critRate: 5.0, critDmg: 50.0, impact: 122, mastery: 85, prof: 85 }
+    ];
+
+    const DEFAULT_DISK_SETS = [
+      { id: 'woodpecker', name: 'ウッドペッカー・エレクトロ', twoSet: 'crit_rate', twoSetValue: 8, twoDesc: '会心率 +8%', fourSet: 'atk_rate', fourSetValue: 9, fourDesc: '会心攻撃時 攻撃力+9% (最大3層)' },
+      { id: 'hormone', name: 'ホルモン・パンク', twoSet: 'atk_rate', twoSetValue: 10, twoDesc: '攻撃力 +10%', fourSet: 'atk_rate', fourSetValue: 25, fourDesc: '接敵時 攻撃力+25% (10秒)' },
+      { id: 'fanged_metal', name: '猛毒のヘヴィメタル', twoSet: 'element_dmg', twoSetValue: 10, twoDesc: '物理属性ダメージ +10%', fourSet: 'element_dmg', fourSetValue: 35, fourDesc: '強撃付与時 与ダメ+35%' },
+      { id: 'polar_metal', name: '極地ヘヴィメタル', twoSet: 'element_dmg', twoSetValue: 10, twoDesc: '氷属性ダメージ +10%', fourSet: 'element_dmg', fourSetValue: 28, fourDesc: '通常/ダッシュ攻撃ダメ+28%' },
+      { id: 'thunder_metal', name: '雷電ヘヴィメタル', twoSet: 'element_dmg', twoSetValue: 10, twoDesc: '雷属性ダメージ +10%', fourSet: 'atk_rate', fourSetValue: 28, fourDesc: '感電付与時 攻撃力+28%' },
+      { id: 'chaotic_metal', name: '混沌ヘヴィメタル', twoSet: 'element_dmg', twoSetValue: 10, twoDesc: 'エーテル属性ダメージ +10%', fourSet: 'crit_dmg', fourSetValue: 20, fourDesc: '侵食付与時 会心ダメ+20%' },
+      { id: 'shockstar', name: 'ショックスター・ディスコ', twoSet: 'impact_rate', twoSetValue: 6, twoDesc: '衝撃力 +6%', fourSet: 'none', fourSetValue: 0, fourDesc: '通常攻撃/ダッシュ攻撃のブレイク値+20%' },
+      { id: 'swing_jazz', name: 'スイング・ジャズ', twoSet: 'energy_regen', twoSetValue: 20, twoDesc: 'エネルギー自動回復 +20%', fourSet: 'element_dmg', fourSetValue: 15, fourDesc: '終結スキル発動時 チーム全体与ダメ+15%' },
+      { id: 'freedom_blues', name: 'フリーダム・ブルース', twoSet: 'anomaly_prof', twoSetValue: 30, twoDesc: '異常掌握 +30', fourSet: 'none', fourSetValue: 0, fourDesc: '強化特殊命中時 敵の異常耐性-20%' }
+    ];
+
+    // SLOT VALID STATS
+    const SLOT_CONFIGS = {
+      1: { name: 'スロット 1 [HP固定]', mainStats: [{ type: 'flat_hp', name: 'HP実数', default: 2200 }] },
+      2: { name: 'スロット 2 [ATK固定]', mainStats: [{ type: 'flat_atk', name: '攻撃力実数', default: 316 }] },
+      3: { name: 'スロット 3 [DEF固定]', mainStats: [{ type: 'flat_def', name: '防御力実数', default: 184 }] },
+      4: { 
+        name: 'スロット 4', 
+        mainStats: [
+          { type: 'crit_rate', name: '会心率 (%)', default: 24.0 },
+          { type: 'crit_dmg', name: '会心ダメージ (%)', default: 48.0 },
+          { type: 'atk_rate', name: '攻撃力 (%)', default: 30.0 },
+          { type: 'anomaly_prof', name: '異常掌握', default: 92 },
+          { type: 'hp_rate', name: 'HP (%)', default: 30.0 },
+          { type: 'def_rate', name: '防御力 (%)', default: 48.0 }
+        ] 
+      },
+      5: { 
+        name: 'スロット 5', 
+        mainStats: [
+          { type: 'element_dmg', name: '属性ダメージ (%)', default: 30.0 },
+          { type: 'pen_ratio', name: '貫通率 (%)', default: 24.0 },
+          { type: 'atk_rate', name: '攻撃力 (%)', default: 30.0 },
+          { type: 'hp_rate', name: 'HP (%)', default: 30.0 },
+          { type: 'def_rate', name: '防御力 (%)', default: 48.0 }
+        ] 
+      },
+      6: { 
+        name: 'スロット 6', 
+        mainStats: [
+          { type: 'impact_rate', name: '衝撃力 (%)', default: 18.0 },
+          { type: 'energy_regen', name: 'エネルギー自動回復 (%)', default: 60.0 },
+          { type: 'anomaly_mastery', name: '異常マスタリー (%)', default: 30.0 },
+          { type: 'atk_rate', name: '攻撃力 (%)', default: 30.0 },
+          { type: 'hp_rate', name: 'HP (%)', default: 30.0 },
+          { type: 'def_rate', name: '防御力 (%)', default: 48.0 }
+        ] 
+      }
+    };
+
+    const SUBSTAT_OPTIONS = [
+      { type: 'none', name: 'なし' },
+      { type: 'crit_rate', name: '会心率 (%)' },
+      { type: 'crit_dmg', name: '会心ダメ (%)' },
+      { type: 'atk_rate', name: '攻撃力 (%)' },
+      { type: 'flat_atk', name: '攻撃力 (実数)' },
+      { type: 'pen_flat', name: '貫通値' },
+      { type: 'anomaly_prof', name: '異常掌握' },
+      { type: 'hp_rate', name: 'HP (%)' },
+      { type: 'flat_hp', name: 'HP (実数)' },
+      { type: 'def_rate', name: '防御力 (%)' },
+      { type: 'flat_def', name: '防御力 (実数)' }
+    ];
+
+    // --- 2. STATE STORES ---
+    let charList = [];
+    let diskSets = [];
+    let enabledFourSetBuffs = {}; // { setId: boolean }
+
+    // --- 3. INITIALIZATION ---
+    function init() {
+      loadStoredData();
+      renderCharSelectOptions();
+      renderCustomCharList();
+      renderCustomDiskList();
+      renderDiskSlots();
+      calculate();
+      lucide.createIcons();
+    }
+
+    function loadStoredData() {
+      // Load custom chars
+      const storedChars = localStorage.getItem('zzz_custom_chars');
+      charList = storedChars ? JSON.parse(storedChars) : [...DEFAULT_PRESET_CHARS];
+
+      // Load custom disks
+      const storedDisks = localStorage.getItem('zzz_custom_disk_sets');
+      diskSets = storedDisks ? JSON.parse(storedDisks) : [...DEFAULT_DISK_SETS];
+    }
+
+    // --- 4. DISK SLOTS RENDERING ---
+    function renderDiskSlots() {
+      const container = document.getElementById('disks-container');
+      container.innerHTML = '';
+
+      for (let slot = 1; slot <= 6; slot++) {
+        const config = SLOT_CONFIGS[slot];
+        
+        let setOptionsHtml = diskSets.map(s => 
+          `<option value="${s.id}">${s.name}</option>`
+        ).join('');
+
+        let mainStatOptionsHtml = config.mainStats.map(m => 
+          `<option value="${m.type}" data-default="${m.default}">${m.name}</option>`
+        ).join('');
+
+        let subStatOptionsHtml = SUBSTAT_OPTIONS.map(s => 
+          `<option value="${s.type}">${s.name}</option>`
+        ).join('');
+
+        const defaultVal = config.mainStats[0].default || 0;
+
+        const card = document.createElement('div');
+        card.className = "bg-zzz-card border border-zzz-border rounded-lg p-3 space-y-2 text-xs";
+        card.innerHTML = `
+          <div class="flex items-center justify-between border-b border-zzz-border/60 pb-1.5">
+            <span class="font-extrabold text-white text-[11px]">${config.name}</span>
+            <select id="disk-set-${slot}" onchange="calculate()" class="bg-zzz-dark border border-zzz-border text-zinc-300 rounded px-1.5 py-0.5 text-[11px] max-w-[150px] focus:outline-none focus:border-zzz-yellow">
+              ${setOptionsHtml}
+            </select>
+          </div>
+
+          <!-- Main Stat -->
+          <div class="bg-black/30 p-2 rounded border border-zinc-800 space-y-1">
+            <div class="text-[10px] text-zinc-400 font-semibold">メインステータス</div>
+            <div class="flex gap-2">
+              <select id="disk-main-type-${slot}" onchange="updateDefaultMainVal(${slot}); calculate();" class="w-2/3 bg-zzz-panel border border-zzz-border rounded px-1.5 py-1 text-[11px] text-white focus:outline-none">
+                ${mainStatOptionsHtml}
+              </select>
+              <input type="number" step="0.1" id="disk-main-val-${slot}" value="${defaultVal}" oninput="calculate()" class="w-1/3 bg-zzz-panel border border-zzz-border rounded px-1.5 py-1 text-[11px] text-white font-mono text-right focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Sub Stats (4 inputs) -->
+          <div class="space-y-1">
+            <div class="text-[10px] text-zinc-400 font-semibold">サブステータス</div>
+            <div class="grid grid-cols-2 gap-1.5">
+              ${[1, 2, 3, 4].map(subIdx => `
+                <div class="flex gap-1 bg-zzz-panel/80 p-1 rounded border border-zinc-800">
+                  <select id="disk-sub-type-${slot}-${subIdx}" onchange="calculate()" class="w-3/5 bg-transparent text-[10px] text-zinc-300 focus:outline-none">
+                    ${subStatOptionsHtml}
+                  </select>
+                  <input type="number" step="0.1" id="disk-sub-val-${slot}-${subIdx}" placeholder="0" oninput="calculate()" class="w-2/5 bg-transparent text-[10px] text-white font-mono text-right focus:outline-none">
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      }
+    }
+
+    function updateDefaultMainVal(slot) {
+      const typeSelect = document.getElementById(`disk-main-type-${slot}`);
+      const valInput = document.getElementById(`disk-main-val-${slot}`);
+      const selectedOption = typeSelect.options[typeSelect.selectedIndex];
+      const defaultVal = selectedOption.getAttribute('data-default');
+      if (defaultVal) {
+        valInput.value = defaultVal;
+      }
+    }
+
+    // --- 5. CALCULATION ENGINE ---
+    function calculate() {
+      // 1. Base Stats
+      const charBaseHp = parseFloat(document.getElementById('base-hp').value) || 0;
+      const charBaseAtk = parseFloat(document.getElementById('base-atk').value) || 0;
+      const charBaseDef = parseFloat(document.getElementById('base-def').value) || 0;
+      const charCritRate = parseFloat(document.getElementById('base-crit-rate').value) || 0;
+      const charCritDmg = parseFloat(document.getElementById('base-crit-dmg').value) || 0;
+      const charImpact = parseFloat(document.getElementById('base-impact').value) || 0;
+      const charMastery = parseFloat(document.getElementById('base-mastery').value) || 0;
+
+      const wengineBaseAtk = parseFloat(document.getElementById('wengine-base-atk').value) || 0;
+      const wengineSubType = document.getElementById('wengine-sub-type').value;
+      const wengineSubVal = parseFloat(document.getElementById('wengine-sub-val').value) || 0;
+      const wengineBuffType = document.getElementById('wengine-buff-type').value;
+      const wengineBuffVal = parseFloat(document.getElementById('wengine-buff-val').value) || 0;
+
+      // Base Attack Calculation
+      const totalBaseAtk = charBaseAtk + wengineBaseAtk;
+      const totalBaseHp = charBaseHp;
+      const totalBaseDef = charBaseDef;
+
+      // Buff Collectors
+      let atkRate = 0;
+      let flatAtk = 0;
+      let hpRate = 0;
+      let flatHp = 0;
+      let defRate = 0;
+      let flatDef = 0;
+      let critRate = charCritRate;
+      let critDmg = charCritDmg;
+      let impactRate = 0;
+      let anomalyProf = 0;
+      let anomalyMasteryRate = 0;
+      let penRatio = 0;
+      let flatPen = 0;
+      let elementDmg = 0;
+
+      // Helper to apply buff
+      function applyStat(type, val) {
+        if (!type || !val || isNaN(val)) return;
+        switch(type) {
+          case 'atk_rate': atkRate += val; break;
+          case 'flat_atk': flatAtk += val; break;
+          case 'hp_rate': hpRate += val; break;
+          case 'flat_hp': flatHp += val; break;
+          case 'def_rate': defRate += val; break;
+          case 'flat_def': flatDef += val; break;
+          case 'crit_rate': critRate += val; break;
+          case 'crit_dmg': critDmg += val; break;
+          case 'impact_rate': impactRate += val; break;
+          case 'anomaly_prof': anomalyProf += val; break;
+          case 'anomaly_mastery': anomalyMasteryRate += val; break;
+          case 'pen_ratio': penRatio += val; break;
+          case 'pen_flat': flatPen += val; break;
+          case 'element_dmg': elementDmg += val; break;
+        }
+      }
+
+      // Add W-Engine Sub & Buff
+      applyStat(wengineSubType, wengineSubVal);
+      applyStat(wengineBuffType, wengineBuffVal);
+
+      // Collect Disk Sets & Disk Stats
+      const setCounts = {};
+      for (let slot = 1; slot <= 6; slot++) {
+        const setId = document.getElementById(`disk-set-${slot}`).value;
+        setCounts[setId] = (setCounts[setId] || 0) + 1;
+
+        // Main stat
+        const mainType = document.getElementById(`disk-main-type-${slot}`).value;
+        const mainVal = parseFloat(document.getElementById(`disk-main-val-${slot}`).value) || 0;
+        applyStat(mainType, mainVal);
+
+        // Sub stats 1-4
+        for (let subIdx = 1; subIdx <= 4; subIdx++) {
+          const subType = document.getElementById(`disk-sub-type-${slot}-${subIdx}`).value;
+          const subVal = parseFloat(document.getElementById(`disk-sub-val-${slot}-${subIdx}`).value) || 0;
+          applyStat(subType, subVal);
+        }
+      }
+
+      // Process Set Bonuses (2-set & 4-set)
+      const activeSetsContainer = document.getElementById('active-set-effects');
+      const fourSetContainer = document.getElementById('four-set-toggles');
+      const fourSetBox = document.getElementById('four-set-toggles-container');
+      activeSetsContainer.innerHTML = '';
+      fourSetContainer.innerHTML = '';
+      let hasFourSet = false;
+
+      for (const [setId, count] of Object.entries(setCounts)) {
+        const setDef = diskSets.find(s => s.id === setId);
+        if (!setDef) continue;
+
+        // 2-Set Bonus
+        if (count >= 2) {
+          applyStat(setDef.twoSet, setDef.twoSetValue);
+          const badge = document.createElement('div');
+          badge.className = "flex items-center justify-between text-zinc-300";
+          badge.innerHTML = `<span>${setDef.name} (2式)</span> <span class="text-zzz-yellow font-mono">${setDef.twoDesc}</span>`;
+          activeSetsContainer.appendChild(badge);
+        }
+
+        // 4-Set Bonus
+        if (count >= 4) {
+          hasFourSet = true;
+          const isEnabled = enabledFourSetBuffs[setId] ?? true;
+
+          if (isEnabled && setDef.fourSet !== 'none') {
+            applyStat(setDef.fourSet, setDef.fourSetValue);
+          }
+
+          const toggleRow = document.createElement('div');
+          toggleRow.className = "flex items-center justify-between";
+          toggleRow.innerHTML = `
+            <label class="flex items-center gap-1.5 cursor-pointer text-zinc-300">
+              <input type="checkbox" ${isEnabled ? 'checked' : ''} onchange="toggleFourSet('${setId}', this.checked)" class="rounded bg-zzz-dark border-zzz-border text-zzz-cyan focus:ring-0">
+              <span>${setDef.name} (4式効果)</span>
+            </label>
+            <span class="text-[11px] text-zinc-400 font-mono">${setDef.fourDesc}</span>
+          `;
+          fourSetContainer.appendChild(toggleRow);
+        }
+      }
+
+      if (Object.keys(setCounts).every(id => setCounts[id] < 2)) {
+        activeSetsContainer.innerHTML = '<span class="text-zinc-500 italic">2セット以上の発動なし</span>';
+      }
+
+      if (hasFourSet) {
+        fourSetBox.classList.remove('hidden');
+      } else {
+        fourSetBox.classList.add('hidden');
+      }
+
+      // Final Math Calculations
+      const finalAtk = Math.round(totalBaseAtk * (1 + atkRate / 100) + flatAtk);
+      const bonusAtk = finalAtk - totalBaseAtk;
+
+      const finalHp = Math.round(totalBaseHp * (1 + hpRate / 100) + flatHp);
+      const bonusHp = finalHp - totalBaseHp;
+
+      const finalDef = Math.round(totalBaseDef * (1 + defRate / 100) + flatDef);
+      const bonusDef = finalDef - totalBaseDef;
+
+      const finalImpact = Math.round(charImpact * (1 + impactRate / 100));
+      const finalMastery = Math.round(charMastery * (1 + anomalyMasteryRate / 100));
+
+      // UI Updates
+      document.getElementById('res-final-atk').innerText = finalAtk.toLocaleString();
+      document.getElementById('res-base-atk').innerText = Math.round(totalBaseAtk).toLocaleString();
+      document.getElementById('res-bonus-atk').innerText = `+${bonusAtk.toLocaleString()}`;
+      document.getElementById('res-atk-rate').innerText = `+${atkRate.toFixed(1)}%`;
+      document.getElementById('res-flat-atk').innerText = `+${flatAtk}`;
+
+      document.getElementById('res-final-hp').innerText = finalHp.toLocaleString();
+      document.getElementById('res-base-hp').innerText = totalBaseHp.toLocaleString();
+      document.getElementById('res-bonus-hp').innerText = `+${bonusHp.toLocaleString()}`;
+
+      document.getElementById('res-final-def').innerText = finalDef.toLocaleString();
+      document.getElementById('res-base-def').innerText = totalBaseDef.toLocaleString();
+      document.getElementById('res-bonus-def').innerText = `+${bonusDef.toLocaleString()}`;
+
+      document.getElementById('res-crit-rate').innerText = `${critRate.toFixed(1)}%`;
+      document.getElementById('res-crit-dmg').innerText = `${critDmg.toFixed(1)}%`;
+
+      document.getElementById('res-impact').innerText = finalImpact;
+      document.getElementById('res-prof').innerText = (anomalyProf + 94); // standard base 94
+      document.getElementById('res-mastery').innerText = finalMastery;
+      document.getElementById('res-pen').innerText = `${penRatio.toFixed(1)}%`;
+      document.getElementById('res-flat-pen').innerText = flatPen;
+      document.getElementById('res-element-dmg').innerText = `+${elementDmg.toFixed(1)}%`;
+    }
+
+    function toggleFourSet(setId, isChecked) {
+      enabledFourSetBuffs[setId] = isChecked;
+      calculate();
+    }
+
+    // --- 6. PRESET & CHARACTER MANAGEMENT ---
+    function renderCharSelectOptions() {
+      const select = document.getElementById('char-select');
+      select.innerHTML = '<option value="">プリセットを選択...</option>' + 
+        charList.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    function applyCharPreset(charId) {
+      if (!charId) return;
+      const char = charList.find(c => c.id === charId);
+      if (!char) return;
+
+      document.getElementById('char-name').value = char.name;
+      document.getElementById('base-hp').value = char.hp;
+      document.getElementById('base-atk').value = char.atk;
+      document.getElementById('base-def').value = char.def;
+      document.getElementById('base-crit-rate').value = char.critRate;
+      document.getElementById('base-crit-dmg').value = char.critDmg;
+      document.getElementById('base-impact').value = char.impact;
+      document.getElementById('base-mastery').value = char.mastery;
+
+      calculate();
+      showToast(`「${char.name}」のステータスを展開しました`);
+    }
+
+    function saveCurrentAsCharPrompt() {
+      const currentName = document.getElementById('char-name').value || 'カスタムキャラ';
+      const promptName = prompt('保存するキャラクタープリセットの名前を入力してください:', currentName);
+      if (!promptName || !promptName.trim()) return;
+
+      const newChar = {
+        id: 'custom_' + Date.now(),
+        name: promptName.trim(),
+        hp: parseFloat(document.getElementById('base-hp').value) || 0,
+        atk: parseFloat(document.getElementById('base-atk').value) || 0,
+        def: parseFloat(document.getElementById('base-def').value) || 0,
+        critRate: parseFloat(document.getElementById('base-crit-rate').value) || 5,
+        critDmg: parseFloat(document.getElementById('base-crit-dmg').value) || 50,
+        impact: parseFloat(document.getElementById('base-impact').value) || 90,
+        mastery: parseFloat(document.getElementById('base-mastery').value) || 90,
+        prof: 90
+      };
+
+      charList.push(newChar);
+      localStorage.setItem('zzz_custom_chars', JSON.stringify(charList));
+      renderCharSelectOptions();
+      renderCustomCharList();
+      showToast(`「${newChar.name}」をプリセットに保存しました！`);
+    }
+
+    function copyCurrentInputsToCharForm() {
+      document.getElementById('new-char-name').value = document.getElementById('char-name').value;
+      document.getElementById('new-char-hp').value = document.getElementById('base-hp').value;
+      document.getElementById('new-char-atk').value = document.getElementById('base-atk').value;
+      document.getElementById('new-char-def').value = document.getElementById('base-def').value;
+      document.getElementById('new-char-crit-rate').value = document.getElementById('base-crit-rate').value;
+      document.getElementById('new-char-crit-dmg').value = document.getElementById('base-crit-dmg').value;
+      document.getElementById('new-char-impact').value = document.getElementById('base-impact').value;
+      document.getElementById('new-char-mastery').value = document.getElementById('base-mastery').value;
+    }
+
+    function registerNewChar() {
+      const name = document.getElementById('new-char-name').value.trim();
+      if (!name) {
+        alert('キャラクター名を入力してください。');
+        return;
+      }
+
+      const newChar = {
+        id: 'custom_' + Date.now(),
+        name: name,
+        hp: parseFloat(document.getElementById('new-char-hp').value) || 0,
+        atk: parseFloat(document.getElementById('new-char-atk').value) || 0,
+        def: parseFloat(document.getElementById('new-char-def').value) || 0,
+        critRate: parseFloat(document.getElementById('new-char-crit-rate').value) || 5.0,
+        critDmg: parseFloat(document.getElementById('new-char-crit-dmg').value) || 50.0,
+        impact: parseFloat(document.getElementById('new-char-impact').value) || 90,
+        mastery: parseFloat(document.getElementById('new-char-mastery').value) || 90,
+        prof: parseFloat(document.getElementById('new-char-prof').value) || 90
+      };
+
+      charList.push(newChar);
+      localStorage.setItem('zzz_custom_chars', JSON.stringify(charList));
+      
+      renderCharSelectOptions();
+      renderCustomCharList();
+      document.getElementById('new-char-name').value = '';
+      showToast(`「${name}」をプリセットに登録しました`);
+    }
+
+    function renderCustomCharList() {
+      const list = document.getElementById('custom-char-list');
+      list.innerHTML = charList.map(c => {
+        const isCustom = c.id.startsWith('custom_');
+        return `
+          <div class="flex items-center justify-between bg-zzz-dark p-2 rounded border border-zzz-border">
+            <div>
+              <span class="font-bold text-white">${c.name}</span>
+              <span class="text-[10px] text-zinc-400 font-mono ml-2">ATK ${c.atk} / HP ${c.hp} / 会心 ${c.critRate}%</span>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="applyCharPreset('${c.id}'); closeCharModal();" class="text-[10px] bg-zzz-yellow/20 text-zzz-yellow hover:bg-zzz-yellow/30 px-2 py-0.5 rounded font-bold">適用</button>
+              ${isCustom ? `<button onclick="deleteCustomChar('${c.id}')" class="text-[10px] text-red-400 hover:text-red-300">削除</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function deleteCustomChar(id) {
+      if (!confirm('このキャラクタープリセットを削除しますか？')) return;
+      charList = charList.filter(c => c.id !== id);
+      localStorage.setItem('zzz_custom_chars', JSON.stringify(charList));
+      renderCharSelectOptions();
+      renderCustomCharList();
+    }
+
+    // --- 7. DISK MANAGEMENT ---
+    function registerNewDiskSet() {
+      const name = document.getElementById('new-disk-name').value.trim();
+      let id = document.getElementById('new-disk-id').value.trim();
+      if (!name) {
+        alert('ディスクセット名を入力してください。');
+        return;
+      }
+      if (!id) id = 'disk_' + Date.now();
+
+      const newDisk = {
+        id: id,
+        name: name,
+        twoSet: document.getElementById('new-disk-2s-stat').value,
+        twoSetValue: parseFloat(document.getElementById('new-disk-2s-val').value) || 0,
+        twoDesc: document.getElementById('new-disk-2s-desc').value || `${name} 2セット効果`,
+        fourSet: document.getElementById('new-disk-4s-stat').value,
+        fourSetValue: parseFloat(document.getElementById('new-disk-4s-val').value) || 0,
+        fourDesc: document.getElementById('new-disk-4s-desc').value || `${name} 4セット効果`
+      };
+
+      diskSets.push(newDisk);
+      localStorage.setItem('zzz_custom_disk_sets', JSON.stringify(diskSets));
+      
+      renderDiskSlots();
+      renderCustomDiskList();
+      calculate();
+      
+      document.getElementById('new-disk-name').value = '';
+      document.getElementById('new-disk-id').value = '';
+      showToast(`「${name}」をディスク一覧に追加しました`);
+    }
+
+    function renderCustomDiskList() {
+      const list = document.getElementById('custom-disk-list');
+      list.innerHTML = diskSets.map(s => {
+        const isCustom = !DEFAULT_DISK_SETS.some(def => def.id === s.id);
+        return `
+          <div class="flex items-center justify-between bg-zzz-dark p-2 rounded border border-zzz-border">
+            <div>
+              <span class="font-bold text-white">${s.name}</span>
+              <span class="text-[10px] text-zinc-400 font-mono ml-2">[2] ${s.twoDesc}</span>
+            </div>
+            ${isCustom ? `<button onclick="deleteCustomDisk('${s.id}')" class="text-[10px] text-red-400 hover:text-red-300">削除</button>` : '<span class="text-[10px] text-zinc-600">デフォルト</span>'}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function deleteCustomDisk(id) {
+      if (!confirm('このディスクセットを削除しますか？')) return;
+      diskSets = diskSets.filter(s => s.id !== id);
+      localStorage.setItem('zzz_custom_disk_sets', JSON.stringify(diskSets));
+      renderDiskSlots();
+      renderCustomDiskList();
+      calculate();
+    }
+
+    // --- 8. STORAGE & BUILD SAVING ---
+    function saveBuildToStorage() {
+      const buildData = {
+        char: {
+          name: document.getElementById('char-name').value,
+          hp: document.getElementById('base-hp').value,
+          atk: document.getElementById('base-atk').value,
+          def: document.getElementById('base-def').value,
+          critRate: document.getElementById('base-crit-rate').value,
+          critDmg: document.getElementById('base-crit-dmg').value,
+          impact: document.getElementById('base-impact').value,
+          mastery: document.getElementById('base-mastery').value
+        },
+        wengine: {
+          name: document.getElementById('wengine-name').value,
+          baseAtk: document.getElementById('wengine-base-atk').value,
+          subType: document.getElementById('wengine-sub-type').value,
+          subVal: document.getElementById('wengine-sub-val').value,
+          buffType: document.getElementById('wengine-buff-type').value,
+          buffVal: document.getElementById('wengine-buff-val').value
+        }
+      };
+      localStorage.setItem('zzz_saved_build', JSON.stringify(buildData));
+      showToast('現在のビルド構成をブラウザに保存しました');
+    }
+
+    function resetAll() {
+      if (!confirm('入力内容を初期状態にリセットしますか？')) return;
+      applyCharPreset('miyabi');
+      document.getElementById('wengine-name').value = '深淵のプレリュード';
+      document.getElementById('wengine-base-atk').value = '713';
+      document.getElementById('wengine-sub-type').value = 'atk_rate';
+      document.getElementById('wengine-sub-val').value = '30.0';
+      document.getElementById('wengine-buff-type').value = 'element_dmg';
+      document.getElementById('wengine-buff-val').value = '25.0';
+      renderDiskSlots();
+      calculate();
+      showToast('リセットが完了しました');
+    }
+
+    // --- 9. MODALS & TOAST UTILS ---
+    function openCharModal() { document.getElementById('modal-char').classList.remove('hidden'); }
+    function closeCharModal() { document.getElementById('modal-char').classList.add('hidden'); }
+    function openDiskModal() { document.getElementById('modal-disk').classList.remove('hidden'); }
+    function closeDiskModal() { document.getElementById('modal-disk').classList.add('hidden'); }
+    function openFormulaModal() { document.getElementById('modal-formula').classList.remove('hidden'); }
+    function closeFormulaModal() { document.getElementById('modal-formula').classList.add('hidden'); }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').innerText = msg;
+      toast.classList.remove('opacity-0', 'translate-y-20');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-20');
+      }, 2500);
+    }
+
+    // Run on load
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
