@@ -282,7 +282,7 @@
 
     </div>
 
-    <!-- RIGHT: STATS SUMMARY (5 COLS) -->
+    <!-- RIGHT: STATS SUMMARY (5 COLS - PHOTO STYLE) -->
     <div class="lg:col-span-5 space-y-4">
       
       <!-- MAIN STATS CONTAINER -->
@@ -776,7 +776,7 @@
       }
     };
 
-    // サブステータスの1回あたりの基準値定義（S級ディスク仕様）
+    // サブステータスの1回あたりの基準値定義（S級ディスク仕様: 異常掌握を削除、異常マスタリーを+9で追加）
     const SUBSTAT_BASE_VALUES = {
       'none': { step: 0, isPercent: false },
       'crit_rate': { step: 2.4, isPercent: true },
@@ -784,7 +784,7 @@
       'atk_rate': { step: 3.0, isPercent: true },
       'flat_atk': { step: 19, isPercent: false },
       'pen_flat': { step: 9, isPercent: false },
-      'anomaly_prof': { step: 9, isPercent: false },
+      'anomaly_mastery': { step: 9, isPercent: false },
       'hp_rate': { step: 3.0, isPercent: true },
       'flat_hp': { step: 112, isPercent: false },
       'def_rate': { step: 4.8, isPercent: true },
@@ -798,7 +798,7 @@
       { type: 'atk_rate', name: '攻撃力 (%)' },
       { type: 'flat_atk', name: '攻撃力 (実数)' },
       { type: 'pen_flat', name: '貫通値' },
-      { type: 'anomaly_prof', name: '異常掌握' },
+      { type: 'anomaly_mastery', name: '異常マスタリー' },
       { type: 'hp_rate', name: 'HP (%)' },
       { type: 'flat_hp', name: 'HP (実数)' },
       { type: 'def_rate', name: '防御力 (%)' },
@@ -922,7 +922,6 @@
       }
 
       const conf = SUBSTAT_BASE_VALUES[type];
-      // 初期値（1回分） ＋ 強化回数（+N回分）
       const totalRolls = 1 + plusCount;
       const computedVal = conf.step * totalRolls;
 
@@ -974,7 +973,7 @@
       let critDmg = charCritDmg;
       let impactRate = 0;
       let anomalyProfFlat = 0;
-      let anomalyMasteryRate = 0;
+      let anomalyMasteryFlat = 0;
       let penRatio = charPenRatio;
       let flatPen = 0;
       let elementDmg = 0;
@@ -993,7 +992,7 @@
           case 'crit_dmg': critDmg += val; break;
           case 'impact_rate': impactRate += val; break;
           case 'anomaly_prof': anomalyProfFlat += val; break;
-          case 'anomaly_mastery': anomalyMasteryRate += val; break;
+          case 'anomaly_mastery': anomalyMasteryFlat += val; break;
           case 'pen_ratio': penRatio += val; break;
           case 'pen_flat': flatPen += val; break;
           case 'element_dmg': elementDmg += val; break;
@@ -1087,7 +1086,9 @@
       const bonusDef = finalDef - totalBaseDef;
 
       const finalImpact = Math.round(charImpact * (1 + impactRate / 100));
-      const finalMastery = Math.round(charMastery * (1 + anomalyMasteryRate / 100));
+      // 異常マスタリーは実数値加算
+      const finalMastery = Math.round(charMastery + anomalyMasteryFlat);
+      // 異常掌握は実数値加算（ディスク6枠メインなど）
       const finalProf = Math.round(charProf + anomalyProfFlat);
       const finalEnergyRegen = charEnergyRegen * (1 + energyRegenRate / 100);
 
