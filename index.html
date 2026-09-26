@@ -16,9 +16,9 @@
             zzz: {
               yellow: '#FCEE0A',
               yellowHover: '#E5D809',
-              dark: '#0e1015',
+              dark: '#0c0e14',
               panel: '#151821',
-              card: '#1c202c',
+              card: '#1b1f2b',
               border: '#2a3042',
               cyan: '#00f0ff',
               green: '#22c55e',
@@ -53,9 +53,6 @@
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #2a3042;
       border-radius: 3px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #3b445c;
     }
   </style>
 </head>
@@ -117,8 +114,8 @@
   <!-- ================= MAIN LAYOUT ================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-    <!-- LEFT & CENTER: INPUTS (8 COLS) -->
-    <div class="lg:col-span-8 space-y-6">
+    <!-- LEFT: INPUTS (7 COLS) -->
+    <div class="lg:col-span-7 space-y-6">
 
       <!-- SECTION 1: CHARACTER BASE -->
       <section class="bg-zzz-panel border border-zzz-border rounded-xl p-4 lg:p-5 shadow-sm">
@@ -139,10 +136,10 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
           <div>
             <label class="block text-zinc-400 mb-1">エージェント名</label>
-            <input type="text" id="char-name" value="カスタムエージェント" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-medium focus:border-zzz-yellow focus:outline-none">
+            <input type="text" id="char-name" value="星見雅" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-medium focus:border-zzz-yellow focus:outline-none">
           </div>
           <div>
             <label class="block text-zinc-400 mb-1">Lv60 基礎HP</label>
@@ -171,6 +168,18 @@
           <div>
             <label class="block text-zinc-400 mb-1">基礎 異常マスタリー</label>
             <input type="number" id="base-mastery" value="94" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">基礎 異常掌握</label>
+            <input type="number" id="base-prof" value="94" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">基礎 貫通率 (%)</label>
+            <input type="number" step="0.1" id="base-pen-ratio" value="0.0" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1">基礎 エネルギー自動回復</label>
+            <input type="number" step="0.01" id="base-energy-regen" value="1.20" oninput="calculate()" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1.5 text-white font-mono focus:border-zzz-yellow focus:outline-none">
           </div>
         </div>
       </section>
@@ -249,128 +258,122 @@
 
     </div>
 
-    <!-- RIGHT: STATS SUMMARY & REALTIME CALCULATIONS (4 COLS) -->
-    <div class="lg:col-span-4 space-y-5">
+    <!-- RIGHT: STATS SUMMARY (5 COLS - PHOTO STYLE) -->
+    <div class="lg:col-span-5 space-y-4">
       
-      <!-- STICKY RESULTS PANEL -->
-      <div class="bg-zzz-panel border border-zzz-border rounded-xl p-5 shadow-xl sticky top-20 space-y-5">
+      <!-- MAIN STATS CONTAINER -->
+      <div class="bg-[#121620] border border-[#23293b] rounded-xl p-4 shadow-xl sticky top-20 space-y-4">
         
-        <div class="flex items-center justify-between border-b border-zzz-border pb-3">
-          <div>
-            <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">RESULT DASHBOARD</span>
-            <h3 class="text-base font-extrabold text-white flex items-center gap-1.5">
-              <span>総合ステータス反映値</span>
-            </h3>
+        <!-- HEADER -->
+        <div class="flex items-center justify-between border-b border-[#23293b] pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-3.5 bg-zzz-yellow rounded-sm"></span>
+            <span class="text-xs font-extrabold text-white tracking-wider">総合ステータス反映値</span>
           </div>
-          <div class="bg-zzz-yellow/20 text-zzz-yellow border border-zzz-yellow/40 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
-            Lv.60
-          </div>
+          <span class="text-[10px] font-mono text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded">Lv.60</span>
         </div>
 
-        <!-- ACTIVE SET BONUSES -->
-        <div class="bg-zzz-card border border-zzz-border rounded-lg p-3 space-y-2">
-          <div class="text-[11px] font-bold text-zinc-400 flex items-center gap-1">
-            <i data-lucide="layers" class="w-3.5 h-3.5 text-zzz-orange"></i>
+        <!-- SET BONUS & TOGGLES -->
+        <div class="bg-[#171c2a] border border-[#23293b] rounded-lg p-3 space-y-2">
+          <div class="text-[11px] font-bold text-zinc-400 flex items-center justify-between">
             <span>発動中のセット効果</span>
           </div>
           <div id="active-set-effects" class="space-y-1 text-xs"></div>
+
+          <div id="four-set-toggles-container" class="hidden pt-2 border-t border-[#23293b] space-y-1.5">
+            <div class="text-[10px] font-bold text-zzz-cyan">4セット条件バフ ON/OFF</div>
+            <div id="four-set-toggles" class="space-y-1.5 text-xs"></div>
+          </div>
         </div>
 
-        <!-- CONDITIONAL 4-SET TOGGLES -->
-        <div id="four-set-toggles-container" class="hidden bg-zzz-card border border-zzz-border rounded-lg p-3 space-y-2">
-          <div class="text-[11px] font-bold text-zzz-cyan flex items-center gap-1">
-            <i data-lucide="toggle-left" class="w-3.5 h-3.5"></i>
-            <span>4セット条件バフのON/OFF</span>
-          </div>
-          <div id="four-set-toggles" class="space-y-1.5 text-xs"></div>
-        </div>
-
-        <!-- PRIMARY STATS DISPLAY -->
-        <div class="space-y-3">
-          <!-- ATTACK -->
-          <div class="bg-gradient-to-r from-zzz-card to-zzz-panel border-l-4 border-l-zzz-yellow border border-zzz-border rounded-lg p-3">
-            <div class="flex justify-between items-center text-xs text-zinc-400">
-              <span class="font-bold">最終 攻撃力 (ATK)</span>
-              <span class="text-[11px] text-zinc-500 font-mono">白値 + 加算値</span>
-            </div>
-            <div class="flex items-baseline justify-between mt-1">
-              <div class="text-2xl font-black text-white font-mono" id="res-final-atk">0</div>
-              <div class="text-xs font-mono text-zinc-400">
-                <span class="text-white" id="res-base-atk">0</span>
-                <span class="text-zzz-yellow font-bold" id="res-bonus-atk">+0</span>
-              </div>
-            </div>
-            <div class="text-[10px] text-zinc-400 mt-1 flex justify-between font-mono border-t border-zzz-border/50 pt-1">
-              <span>ATK%: <span id="res-atk-rate" class="text-zinc-200">0%</span></span>
-              <span>固定ATK: <span id="res-flat-atk" class="text-zinc-200">+0</span></span>
+        <!-- UNIFIED STATS PANEL (MATCHING PHOTO EXACTLY) -->
+        <div class="bg-[#171c2a] border border-[#23293b] rounded-lg p-3.5 space-y-2.5 text-xs font-mono">
+          
+          <!-- HP -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">HP</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-zinc-500 text-[10px]" id="res-detail-hp">(7421 + 0)</span>
+              <span class="font-extrabold text-white text-sm" id="res-final-hp">7421</span>
             </div>
           </div>
 
-          <!-- HP & DEF -->
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="bg-zzz-card border border-zzz-border rounded-lg p-2.5">
-              <div class="text-zinc-400 text-[11px]">最終 HP</div>
-              <div class="text-lg font-bold text-white font-mono mt-0.5" id="res-final-hp">0</div>
-              <div class="text-[10px] text-zinc-500 font-mono">
-                <span id="res-base-hp">0</span> <span id="res-bonus-hp" class="text-green-400">+0</span>
-              </div>
-            </div>
-            <div class="bg-zzz-card border border-zzz-border rounded-lg p-2.5">
-              <div class="text-zinc-400 text-[11px]">最終 防御力 (DEF)</div>
-              <div class="text-lg font-bold text-white font-mono mt-0.5" id="res-final-def">0</div>
-              <div class="text-[10px] text-zinc-500 font-mono">
-                <span id="res-base-def">0</span> <span id="res-bonus-def" class="text-green-400">+0</span>
-              </div>
+          <!-- 攻撃力 -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">攻撃力</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-zinc-500 text-[10px]" id="res-detail-atk">(1615 + 0)</span>
+              <span class="font-extrabold text-white text-sm" id="res-final-atk">1615</span>
             </div>
           </div>
 
-          <!-- CRIT STATS -->
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="bg-zzz-card border border-zzz-border rounded-lg p-2.5">
-              <div class="text-zinc-400 text-[11px]">会心率</div>
-              <div class="text-lg font-bold text-zzz-yellow font-mono mt-0.5" id="res-crit-rate">0.0%</div>
-            </div>
-            <div class="bg-zzz-card border border-zzz-border rounded-lg p-2.5">
-              <div class="text-zinc-400 text-[11px]">会心ダメージ</div>
-              <div class="text-lg font-bold text-orange-400 font-mono mt-0.5" id="res-crit-dmg">0.0%</div>
+          <!-- 防御力 -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">防御力</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-zinc-500 text-[10px]" id="res-detail-def">(608 + 0)</span>
+              <span class="font-extrabold text-white text-sm" id="res-final-def">608</span>
             </div>
           </div>
 
-          <!-- OTHER COMBAT STATS -->
-          <div class="bg-zzz-card border border-zzz-border rounded-lg p-3 space-y-1.5 text-xs font-mono">
-            <div class="flex justify-between items-center">
-              <span class="text-zinc-400">衝撃力 (ブレイク値)</span>
-              <span class="font-bold text-white" id="res-impact">0</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-zinc-400">異常掌握</span>
-              <span class="font-bold text-white" id="res-prof">0</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-zinc-400">異常マスタリー</span>
-              <span class="font-bold text-white" id="res-mastery">0</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-zinc-400">貫通率</span>
-              <span class="font-bold text-white" id="res-pen">0.0%</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-zinc-400">貫通値</span>
-              <span class="font-bold text-white" id="res-flat-pen">0</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-zinc-400">属性ダメージボーナス</span>
-              <span class="font-bold text-zzz-cyan" id="res-element-dmg">+0.0%</span>
-            </div>
+          <!-- 会心率 -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">会心率</span>
+            <span class="font-extrabold text-white text-sm" id="res-crit-rate">5.0%</span>
+          </div>
+
+          <!-- 会心ダメージ -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">会心ダメージ</span>
+            <span class="font-extrabold text-white text-sm" id="res-crit-dmg">50.0%</span>
+          </div>
+
+          <!-- 衝撃力 (ブレイク値) -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">衝撃力（ブレイク値）</span>
+            <span class="font-extrabold text-white text-sm" id="res-impact">94</span>
+          </div>
+
+          <!-- 異常掌握 -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">異常掌握</span>
+            <span class="font-extrabold text-white text-sm" id="res-prof">94</span>
+          </div>
+
+          <!-- 異常マスタリー -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">異常マスタリー</span>
+            <span class="font-extrabold text-white text-sm" id="res-mastery">94</span>
+          </div>
+
+          <!-- 貫通率 -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">貫通率</span>
+            <span class="font-extrabold text-white text-sm" id="res-pen">0.0%</span>
+          </div>
+
+          <!-- 貫通値 -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">貫通値</span>
+            <span class="font-extrabold text-white text-sm" id="res-flat-pen">0</span>
+          </div>
+
+          <!-- エネルギー自動回復 -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">エネルギー自動回復</span>
+            <span class="font-extrabold text-white text-sm" id="res-energy-regen">1.20/秒</span>
+          </div>
+
+          <!-- 属性ダメージボーナス (Cyan Highlight) -->
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-zinc-400 font-sans">属性ダメージボーナス</span>
+            <span class="font-extrabold text-zzz-cyan text-sm" id="res-element-dmg">+25.0%</span>
           </div>
 
         </div>
 
-        <div class="bg-black/30 border border-zinc-800 rounded p-2.5 text-[11px] text-zinc-400 space-y-1">
-          <div class="font-semibold text-zinc-300">💡 白値と緑値の計算公式</div>
-          <div class="font-mono text-[10px] text-zinc-500">
-            最終ATK = (キャラ白値 + 音動機白値) × (1 + ATK%) + 実数ATK
-          </div>
+        <div class="bg-black/30 border border-zinc-800 rounded p-2 text-[10px] text-zinc-500 font-mono">
+          ※ 最終ATK = (キャラ白値 + 音動機白値) × (1 + ATK%) + 実数ATK
         </div>
 
       </div>
@@ -443,6 +446,14 @@
               <label class="block text-zinc-400 mb-1">異常掌握</label>
               <input type="number" id="new-char-prof" value="90" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
             </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">基礎 貫通率 (%)</label>
+              <input type="number" step="0.1" id="new-char-pen-ratio" value="0.0" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-zinc-400 mb-1">基礎 EN自動回復</label>
+              <input type="number" step="0.01" id="new-char-energy-regen" value="1.20" class="w-full bg-zzz-dark border border-zzz-border rounded px-2 py-1.5 text-white font-mono">
+            </div>
           </div>
 
           <button onclick="registerNewChar()" class="w-full bg-zzz-yellow hover:bg-zzz-yellowHover text-black font-extrabold py-2 rounded text-xs transition mt-2">
@@ -450,7 +461,6 @@
           </button>
         </div>
 
-        <!-- Registered Character List -->
         <div>
           <h4 class="font-bold text-white mb-2 flex items-center justify-between">
             <span>登録済みエージェント一覧（全キャラ削除可能）</span>
@@ -602,11 +612,11 @@
   <script>
     // --- 1. DEFAULT DATASETS ---
     const DEFAULT_PRESET_CHARS = [
-      { id: 'char_miyabi', name: '星見雅', hp: 7421, atk: 902, def: 608, critRate: 5.0, critDmg: 50.0, impact: 94, mastery: 94, prof: 94 },
-      { id: 'char_ellen', name: 'エレン・ジョー', hp: 7654, atk: 864, def: 598, critRate: 5.0, critDmg: 50.0, impact: 90, mastery: 90, prof: 90 },
-      { id: 'char_zhu_yuan', name: '朱鳶', hp: 7311, atk: 882, def: 602, critRate: 5.0, critDmg: 50.0, impact: 88, mastery: 88, prof: 88 },
-      { id: 'char_jane_doe', name: 'ジェーン・ドゥ', hp: 7520, atk: 840, def: 615, critRate: 5.0, critDmg: 50.0, impact: 92, mastery: 114, prof: 114 },
-      { id: 'char_qingyi', name: '青衣', hp: 7890, atk: 756, def: 640, critRate: 5.0, critDmg: 50.0, impact: 122, mastery: 85, prof: 85 }
+      { id: 'char_miyabi', name: '星見雅', hp: 7421, atk: 902, def: 608, critRate: 5.0, critDmg: 50.0, impact: 94, mastery: 94, prof: 94, penRatio: 0.0, energyRegen: 1.20 },
+      { id: 'char_ellen', name: 'エレン・ジョー', hp: 7654, atk: 864, def: 598, critRate: 5.0, critDmg: 50.0, impact: 90, mastery: 90, prof: 90, penRatio: 0.0, energyRegen: 1.20 },
+      { id: 'char_zhu_yuan', name: '朱鳶', hp: 7311, atk: 882, def: 602, critRate: 5.0, critDmg: 50.0, impact: 88, mastery: 88, prof: 88, penRatio: 0.0, energyRegen: 1.20 },
+      { id: 'char_jane_doe', name: 'ジェーン・ドゥ', hp: 7520, atk: 840, def: 615, critRate: 5.0, critDmg: 50.0, impact: 92, mastery: 114, prof: 114, penRatio: 0.0, energyRegen: 1.20 },
+      { id: 'char_qingyi', name: '青衣', hp: 7890, atk: 756, def: 640, critRate: 5.0, critDmg: 50.0, impact: 122, mastery: 85, prof: 85, penRatio: 0.0, energyRegen: 1.20 }
     ];
 
     const DEFAULT_DISK_SETS = [
@@ -673,12 +683,10 @@
       { type: 'flat_def', name: '防御力 (実数)' }
     ];
 
-    // --- 2. STATE STORES ---
     let charList = [];
     let diskSets = [];
     let enabledFourSetBuffs = {};
 
-    // --- 3. INITIALIZATION ---
     function init() {
       loadStoredData();
       renderCharSelectOptions();
@@ -690,7 +698,6 @@
     }
 
     function loadStoredData() {
-      // キャラ読み込み: 保存データがあればそれを採用。なければデフォルトを初回保存。
       const storedChars = localStorage.getItem('zzz_custom_chars');
       if (storedChars !== null) {
         charList = JSON.parse(storedChars);
@@ -699,7 +706,6 @@
         localStorage.setItem('zzz_custom_chars', JSON.stringify(charList));
       }
 
-      // ディスク読み込み: 保存データがあればそれを採用。なければデフォルトを初回保存。
       const storedDisks = localStorage.getItem('zzz_custom_disk_sets');
       if (storedDisks !== null) {
         diskSets = JSON.parse(storedDisks);
@@ -709,7 +715,6 @@
       }
     }
 
-    // --- 4. DISK SLOTS RENDERING ---
     function renderDiskSlots() {
       const container = document.getElementById('disks-container');
       container.innerHTML = '';
@@ -780,7 +785,7 @@
       }
     }
 
-    // --- 5. CALCULATION ENGINE ---
+    // --- CALCULATION ENGINE ---
     function calculate() {
       const charBaseHp = parseFloat(document.getElementById('base-hp').value) || 0;
       const charBaseAtk = parseFloat(document.getElementById('base-atk').value) || 0;
@@ -789,6 +794,9 @@
       const charCritDmg = parseFloat(document.getElementById('base-crit-dmg').value) || 0;
       const charImpact = parseFloat(document.getElementById('base-impact').value) || 0;
       const charMastery = parseFloat(document.getElementById('base-mastery').value) || 0;
+      const charProf = parseFloat(document.getElementById('base-prof').value) || 94;
+      const charPenRatio = parseFloat(document.getElementById('base-pen-ratio').value) || 0;
+      const charEnergyRegen = parseFloat(document.getElementById('base-energy-regen').value) || 1.20;
 
       const wengineBaseAtk = parseFloat(document.getElementById('wengine-base-atk').value) || 0;
       const wengineSubType = document.getElementById('wengine-sub-type').value;
@@ -809,11 +817,12 @@
       let critRate = charCritRate;
       let critDmg = charCritDmg;
       let impactRate = 0;
-      let anomalyProf = 0;
+      let anomalyProfFlat = 0;
       let anomalyMasteryRate = 0;
-      let penRatio = 0;
+      let penRatio = charPenRatio;
       let flatPen = 0;
       let elementDmg = 0;
+      let energyRegenRate = 0;
 
       function applyStat(type, val) {
         if (!type || !val || isNaN(val)) return;
@@ -827,11 +836,12 @@
           case 'crit_rate': critRate += val; break;
           case 'crit_dmg': critDmg += val; break;
           case 'impact_rate': impactRate += val; break;
-          case 'anomaly_prof': anomalyProf += val; break;
+          case 'anomaly_prof': anomalyProfFlat += val; break;
           case 'anomaly_mastery': anomalyMasteryRate += val; break;
           case 'pen_ratio': penRatio += val; break;
           case 'pen_flat': flatPen += val; break;
           case 'element_dmg': elementDmg += val; break;
+          case 'energy_regen': energyRegenRate += val; break;
         }
       }
 
@@ -919,29 +929,27 @@
 
       const finalImpact = Math.round(charImpact * (1 + impactRate / 100));
       const finalMastery = Math.round(charMastery * (1 + anomalyMasteryRate / 100));
+      const finalProf = Math.round(charProf + anomalyProfFlat);
+      const finalEnergyRegen = charEnergyRegen * (1 + energyRegenRate / 100);
+
+      // DOM Updates
+      document.getElementById('res-final-hp').innerText = finalHp.toLocaleString();
+      document.getElementById('res-detail-hp').innerText = `(${totalBaseHp.toLocaleString()} + ${bonusHp.toLocaleString()})`;
 
       document.getElementById('res-final-atk').innerText = finalAtk.toLocaleString();
-      document.getElementById('res-base-atk').innerText = Math.round(totalBaseAtk).toLocaleString();
-      document.getElementById('res-bonus-atk').innerText = `+${bonusAtk.toLocaleString()}`;
-      document.getElementById('res-atk-rate').innerText = `+${atkRate.toFixed(1)}%`;
-      document.getElementById('res-flat-atk').innerText = `+${flatAtk}`;
-
-      document.getElementById('res-final-hp').innerText = finalHp.toLocaleString();
-      document.getElementById('res-base-hp').innerText = totalBaseHp.toLocaleString();
-      document.getElementById('res-bonus-hp').innerText = `+${bonusHp.toLocaleString()}`;
+      document.getElementById('res-detail-atk').innerText = `(${Math.round(totalBaseAtk).toLocaleString()} + ${bonusAtk.toLocaleString()})`;
 
       document.getElementById('res-final-def').innerText = finalDef.toLocaleString();
-      document.getElementById('res-base-def').innerText = totalBaseDef.toLocaleString();
-      document.getElementById('res-bonus-def').innerText = `+${bonusDef.toLocaleString()}`;
+      document.getElementById('res-detail-def').innerText = `(${totalBaseDef.toLocaleString()} + ${bonusDef.toLocaleString()})`;
 
       document.getElementById('res-crit-rate').innerText = `${critRate.toFixed(1)}%`;
       document.getElementById('res-crit-dmg').innerText = `${critDmg.toFixed(1)}%`;
-
       document.getElementById('res-impact').innerText = finalImpact;
-      document.getElementById('res-prof').innerText = (anomalyProf + 94);
+      document.getElementById('res-prof').innerText = finalProf;
       document.getElementById('res-mastery').innerText = finalMastery;
       document.getElementById('res-pen').innerText = `${penRatio.toFixed(1)}%`;
       document.getElementById('res-flat-pen').innerText = flatPen;
+      document.getElementById('res-energy-regen').innerText = `${finalEnergyRegen.toFixed(2)}/秒`;
       document.getElementById('res-element-dmg').innerText = `+${elementDmg.toFixed(1)}%`;
     }
 
@@ -950,7 +958,7 @@
       calculate();
     }
 
-    // --- 6. PRESET & CHARACTER MANAGEMENT ---
+    // --- PRESET & CHARACTER MANAGEMENT ---
     function renderCharSelectOptions() {
       const select = document.getElementById('char-select');
       if (charList.length === 0) {
@@ -974,6 +982,9 @@
       document.getElementById('base-crit-dmg').value = char.critDmg;
       document.getElementById('base-impact').value = char.impact;
       document.getElementById('base-mastery').value = char.mastery;
+      document.getElementById('base-prof').value = char.prof ?? 94;
+      document.getElementById('base-pen-ratio').value = char.penRatio ?? 0.0;
+      document.getElementById('base-energy-regen').value = char.energyRegen ?? 1.20;
 
       calculate();
       showToast(`「${char.name}」のステータスを展開しました`);
@@ -994,7 +1005,9 @@
         critDmg: parseFloat(document.getElementById('base-crit-dmg').value) || 50,
         impact: parseFloat(document.getElementById('base-impact').value) || 90,
         mastery: parseFloat(document.getElementById('base-mastery').value) || 90,
-        prof: 90
+        prof: parseFloat(document.getElementById('base-prof').value) || 94,
+        penRatio: parseFloat(document.getElementById('base-pen-ratio').value) || 0.0,
+        energyRegen: parseFloat(document.getElementById('base-energy-regen').value) || 1.20
       };
 
       charList.push(newChar);
@@ -1013,6 +1026,9 @@
       document.getElementById('new-char-crit-dmg').value = document.getElementById('base-crit-dmg').value;
       document.getElementById('new-char-impact').value = document.getElementById('base-impact').value;
       document.getElementById('new-char-mastery').value = document.getElementById('base-mastery').value;
+      document.getElementById('new-char-prof').value = document.getElementById('base-prof').value;
+      document.getElementById('new-char-pen-ratio').value = document.getElementById('base-pen-ratio').value;
+      document.getElementById('new-char-energy-regen').value = document.getElementById('base-energy-regen').value;
     }
 
     function registerNewChar() {
@@ -1032,7 +1048,9 @@
         critDmg: parseFloat(document.getElementById('new-char-crit-dmg').value) || 50.0,
         impact: parseFloat(document.getElementById('new-char-impact').value) || 90,
         mastery: parseFloat(document.getElementById('new-char-mastery').value) || 90,
-        prof: parseFloat(document.getElementById('new-char-prof').value) || 90
+        prof: parseFloat(document.getElementById('new-char-prof').value) || 94,
+        penRatio: parseFloat(document.getElementById('new-char-pen-ratio').value) || 0.0,
+        energyRegen: parseFloat(document.getElementById('new-char-energy-regen').value) || 1.20
       };
 
       charList.push(newChar);
@@ -1044,7 +1062,6 @@
       showToast(`「${name}」をプリセットに登録しました`);
     }
 
-    // 全てのキャラに削除ボタンを表示
     function renderCustomCharList() {
       const list = document.getElementById('custom-char-list');
       if (charList.length === 0) {
@@ -1055,7 +1072,7 @@
         <div class="flex items-center justify-between bg-zzz-dark p-2 rounded border border-zzz-border">
           <div>
             <span class="font-bold text-white">${c.name}</span>
-            <span class="text-[10px] text-zinc-400 font-mono ml-2">ATK ${c.atk} / HP ${c.hp} / 会心 ${c.critRate}%</span>
+            <span class="text-[10px] text-zinc-400 font-mono ml-2">ATK ${c.atk} / HP ${c.hp} / 会心 ${c.critRate}% / EN ${c.energyRegen ?? 1.2}</span>
           </div>
           <div class="flex items-center gap-2">
             <button onclick="applyCharPreset('${c.id}'); closeCharModal();" class="text-[10px] bg-zzz-yellow/20 text-zzz-yellow hover:bg-zzz-yellow/30 px-2 py-0.5 rounded font-bold transition">適用</button>
@@ -1076,7 +1093,7 @@
       showToast(`「${name}」を削除しました`);
     }
 
-    // --- 7. DISK MANAGEMENT ---
+    // --- DISK MANAGEMENT ---
     function registerNewDiskSet() {
       const name = document.getElementById('new-disk-name').value.trim();
       let id = document.getElementById('new-disk-id').value.trim();
@@ -1109,7 +1126,6 @@
       showToast(`「${name}」をディスク一覧に追加しました`);
     }
 
-    // 全てのディスクセットに削除ボタンを表示
     function renderCustomDiskList() {
       const list = document.getElementById('custom-disk-list');
       if (diskSets.length === 0) {
@@ -1139,7 +1155,7 @@
       showToast(`「${name}」を削除しました`);
     }
 
-    // --- 8. STORAGE & BUILD SAVING ---
+    // --- STORAGE & BUILD SAVING ---
     function saveBuildToStorage() {
       const buildData = {
         char: {
@@ -1150,7 +1166,10 @@
           critRate: document.getElementById('base-crit-rate').value,
           critDmg: document.getElementById('base-crit-dmg').value,
           impact: document.getElementById('base-impact').value,
-          mastery: document.getElementById('base-mastery').value
+          mastery: document.getElementById('base-mastery').value,
+          prof: document.getElementById('base-prof').value,
+          penRatio: document.getElementById('base-pen-ratio').value,
+          energyRegen: document.getElementById('base-energy-regen').value
         },
         wengine: {
           name: document.getElementById('wengine-name').value,
@@ -1167,15 +1186,7 @@
 
     function resetAll() {
       if (!confirm('入力内容を初期状態にリセットしますか？')) return;
-      document.getElementById('char-name').value = 'カスタムエージェント';
-      document.getElementById('base-hp').value = '7421';
-      document.getElementById('base-atk').value = '902';
-      document.getElementById('base-def').value = '608';
-      document.getElementById('base-crit-rate').value = '5.0';
-      document.getElementById('base-crit-dmg').value = '50.0';
-      document.getElementById('base-impact').value = '94';
-      document.getElementById('base-mastery').value = '94';
-
+      applyCharPreset('char_miyabi');
       document.getElementById('wengine-name').value = '深淵のプレリュード';
       document.getElementById('wengine-base-atk').value = '713';
       document.getElementById('wengine-sub-type').value = 'atk_rate';
@@ -1187,7 +1198,7 @@
       showToast('リセットが完了しました');
     }
 
-    // --- 9. MODALS & TOAST UTILS ---
+    // --- MODALS & TOAST UTILS ---
     function openCharModal() { document.getElementById('modal-char').classList.remove('hidden'); }
     function closeCharModal() { document.getElementById('modal-char').classList.add('hidden'); }
     function openDiskModal() { document.getElementById('modal-disk').classList.remove('hidden'); }
