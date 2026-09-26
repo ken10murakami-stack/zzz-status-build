@@ -103,6 +103,12 @@
           <span>読込</span>
         </button>
 
+        <!-- 端末・ブラウザ間データ移行・共有ボタン -->
+        <button onclick="openShareModal()" class="flex items-center gap-1 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/40 text-sky-300 px-3 py-1.5 rounded text-xs font-bold transition">
+          <i data-lucide="share-2" class="w-4 h-4"></i>
+          <span>共有・移行</span>
+        </button>
+
         <button onclick="openFormulaModal()" class="flex items-center gap-1 bg-zzz-panel hover:bg-zzz-card border border-zzz-border text-zinc-300 px-3 py-1.5 rounded text-xs transition">
           <i data-lucide="info" class="w-4 h-4"></i>
           <span>計算式</span>
@@ -246,7 +252,6 @@
           </div>
         </div>
 
-        <!-- 音動機パッシブバフ（異常マスタリーを追加） -->
         <div class="mt-3 pt-3 border-t border-zzz-border/60 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div>
             <div class="flex items-center gap-1.5 mb-1">
@@ -403,6 +408,72 @@
 
   </main>
 
+  <!-- ================= MODAL: SHARE & SYNC (データ書き出し・読み込み) ================= -->
+  <div id="modal-share" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-zzz-panel border border-zzz-border rounded-xl max-w-xl w-full max-h-[85vh] flex flex-col shadow-2xl">
+      <div class="p-4 border-b border-zzz-border flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="share-2" class="w-5 h-5 text-sky-400"></i>
+          <h3 class="text-sm font-bold text-white">データ共有・端末間移行（エクスポート / インポート）</h3>
+        </div>
+        <button onclick="closeShareModal()" class="text-zinc-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 overflow-y-auto custom-scrollbar space-y-5 text-xs flex-1">
+        
+        <!-- EXPORT SECTION -->
+        <div class="bg-zzz-card border border-zzz-border rounded-lg p-3.5 space-y-3">
+          <div class="font-bold text-sky-300 flex items-center gap-1.5">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>データを書き出す (エクスポート)</span>
+          </div>
+          <p class="text-zinc-400 text-[11px] leading-relaxed">
+            登録したキャラ・音動機・ディスクセット・保存ビルドの全データをファイルまたはコードとして書き出します。
+          </p>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button onclick="exportDataAsFile()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-400 text-black font-extrabold px-3 py-1.5 rounded transition">
+              <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+              <span>JSONファイルを保存</span>
+            </button>
+            <button onclick="copyExportCode()" class="flex items-center gap-1.5 bg-zzz-panel hover:bg-zzz-dark border border-zinc-700 text-zinc-200 px-3 py-1.5 rounded font-bold transition">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>共有コードをコピー</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- IMPORT SECTION -->
+        <div class="bg-zzz-card border border-zzz-border rounded-lg p-3.5 space-y-3">
+          <div class="font-bold text-green-400 flex items-center gap-1.5">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+            <span>データを読み込む (インポート)</span>
+          </div>
+          <p class="text-zinc-400 text-[11px] leading-relaxed">
+            別の端末やブラウザで書き出したJSONファイルを選択するか、共有コードを貼り付けて復元します。
+          </p>
+          
+          <!-- FILE UPLOAD -->
+          <div class="p-2.5 bg-black/40 rounded border border-zinc-800 space-y-1.5">
+            <span class="text-zinc-300 font-bold block text-[11px]">方法 A: JSONファイルから読み込む</span>
+            <input type="file" id="import-file-input" accept=".json" onchange="importDataFromFile(event)" class="text-zinc-400 text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer">
+          </div>
+
+          <!-- CODE PASTE -->
+          <div class="p-2.5 bg-black/40 rounded border border-zinc-800 space-y-2">
+            <span class="text-zinc-300 font-bold block text-[11px]">方法 B: 共有コードから復元</span>
+            <textarea id="import-code-area" rows="3" placeholder="コピーした共有コードをここに貼り付けてください..." class="w-full bg-zzz-dark border border-zzz-border rounded p-2 text-white font-mono text-[10px] focus:outline-none focus:border-sky-400 custom-scrollbar"></textarea>
+            <button onclick="importDataFromCode()" class="w-full bg-green-600 hover:bg-green-500 text-white font-extrabold py-1.5 rounded text-xs transition">
+              コードからデータを復元する
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- ================= MODAL: LOAD BUILD (ビルド一覧・読込) ================= -->
   <div id="modal-load-build" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-zzz-panel border border-zzz-border rounded-xl max-w-xl w-full max-h-[85vh] flex flex-col shadow-2xl">
@@ -418,9 +489,7 @@
 
       <div class="p-4 overflow-y-auto custom-scrollbar space-y-3 text-xs flex-1">
         <p class="text-[11px] text-zinc-400">保存された「キャラ・音動機・ディスク6枚構成」をワンクリックで復元します。</p>
-        <div id="saved-builds-list" class="space-y-2">
-          <!-- JSでビルドカードを描画 -->
-        </div>
+        <div id="saved-builds-list" class="space-y-2"></div>
       </div>
     </div>
   </div>
@@ -567,7 +636,6 @@
             </div>
           </div>
 
-          <!-- 音動機登録フォームのパッシブ選択肢（異常マスタリーを追加） -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-zzz-border/50">
             <div>
               <label class="block text-zinc-400 mb-1">パッシブバフ (種別)</label>
@@ -644,17 +712,18 @@
                   <option value="pen_ratio">貫通率 (%)</option>
                   <option value="element_dmg">属性ダメージ (%)</option>
                   <option value="impact_rate">衝撃力 (%)</option>
+                  <option value="anomaly_mastery">異常マスタリー</option>
                   <option value="anomaly_prof">異常掌握</option>
                   <option value="energy_regen">エネルギー自動回復 (%)</option>
                 </select>
               </div>
               <div>
                 <label class="block text-zinc-500 mb-1">上昇値 (数値)</label>
-                <input type="number" step="0.1" id="new-disk-2s-val" placeholder="例: 10" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white font-mono">
+                <input type="number" step="0.1" id="new-disk-2s-val" placeholder="例: 30" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white font-mono">
               </div>
               <div>
                 <label class="block text-zinc-500 mb-1">説明ラベル</label>
-                <input type="text" id="new-disk-2s-desc" placeholder="例: 氷属性ダメージ +10%" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white">
+                <input type="text" id="new-disk-2s-desc" placeholder="例: 異常マスタリー +30" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white">
               </div>
             </div>
           </div>
@@ -671,15 +740,16 @@
                   <option value="crit_dmg">会心ダメージ (%)</option>
                   <option value="element_dmg">属性ダメージ (%)</option>
                   <option value="pen_ratio">貫通率 (%)</option>
+                  <option value="anomaly_mastery">異常マスタリー</option>
                 </select>
               </div>
               <div>
                 <label class="block text-zinc-500 mb-1">上昇値 (数値)</label>
-                <input type="number" step="0.1" id="new-disk-4s-val" placeholder="例: 20" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white font-mono">
+                <input type="number" step="0.1" id="new-disk-4s-val" placeholder="例: 45" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white font-mono">
               </div>
               <div>
                 <label class="block text-zinc-500 mb-1">条件説明</label>
-                <input type="text" id="new-disk-4s-desc" placeholder="例: 氷結付与時 攻撃力+20%" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white">
+                <input type="text" id="new-disk-4s-desc" placeholder="例: 状態異常時 異常マスタリー+45" class="w-full bg-zzz-card border border-zzz-border rounded px-2 py-1 text-white">
               </div>
             </div>
           </div>
@@ -1036,7 +1106,6 @@
 
       applyStat(wengineSubType, wengineSubVal);
 
-      // 音動機パッシブの適用（異常マスタリーも applyStat で合算）
       if (wengineBuffEnabled) {
         applyStat(wengineBuffType, wengineBuffVal);
       }
@@ -1121,7 +1190,6 @@
       const bonusDef = finalDef - totalBaseDef;
 
       const finalImpact = Math.round(charImpact * (1 + impactRate / 100));
-      // 異常マスタリー合算（キャラ基礎 ＋ ディスクメイン ＋ ディスクサブ ＋ 音動機パッシブ）
       const finalMastery = Math.round(charMastery + anomalyMasteryFlat);
       const finalProf = Math.round(charProf + anomalyProfFlat);
       const finalEnergyRegen = charEnergyRegen * (1 + energyRegenRate / 100);
@@ -1338,7 +1406,7 @@
 
     function copyCurrentInputsToWEngineForm() {
       document.getElementById('new-wengine-name').value = document.getElementById('wengine-name').value;
-      document.getElementById('new-wengine-atk').value = document.getElementById('wengine-base-atk').value;
+      document.getElementById('new-wengine-atk').value = document.getElementById('base-atk').value;
       document.getElementById('new-wengine-sub-type').value = document.getElementById('wengine-sub-type').value;
       document.getElementById('new-wengine-sub-val').value = document.getElementById('wengine-sub-val').value;
       document.getElementById('new-wengine-buff-type').value = document.getElementById('wengine-buff-type').value;
@@ -1464,7 +1532,7 @@
       showToast(`「${name}」を削除しました`);
     }
 
-    // --- BUILD SAVE & LOAD ENGINE (丸ごと保存＆読込) ---
+    // --- BUILD SAVE & LOAD ENGINE ---
     function saveBuildPrompt() {
       const charName = document.getElementById('char-name').value || 'エージェント';
       const defaultTitle = `${charName} ビルド (${new Date().toLocaleDateString('ja-JP')})`;
@@ -1604,6 +1672,148 @@
       showToast(`「${name}」を削除しました`);
     }
 
+    // --- SHARE & SYNC ENGINE (書き出し・読み込み) ---
+    function getFullExportData() {
+      return {
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        chars: charList,
+        wengines: wengineList,
+        diskSets: diskSets,
+        builds: savedBuilds
+      };
+    }
+
+    function exportDataAsFile() {
+      const data = getFullExportData();
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `zzz_statlab_backup_${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('バックアップファイルを保存しました');
+    }
+
+    function copyExportCode() {
+      const data = getFullExportData();
+      const jsonStr = JSON.stringify(data);
+      // UTF-8対応のBase64エンコード
+      const base64Str = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+      
+      navigator.clipboard.writeText(base64Str).then(() => {
+        showToast('共有コードをクリップボードにコピーしました！');
+      }).catch(() => {
+        prompt('以下のコードをすべてコピーしてください:', base64Str);
+      });
+    }
+
+    function importDataFromFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          applyImportedData(parsed);
+          event.target.value = ''; // reset
+        } catch (err) {
+          alert('ファイルの読み込みに失敗しました。正しいJSONファイルを選択してください。');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function importDataFromCode() {
+      const raw = document.getElementById('import-code-area').value.trim();
+      if (!raw) {
+        alert('共有コードを貼り付けてください。');
+        return;
+      }
+
+      try {
+        let jsonStr;
+        // Base64デコード（失敗時は直接JSONパースを試みる）
+        try {
+          jsonStr = decodeURIComponent(Array.prototype.map.call(atob(raw), c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        } catch (_) {
+          jsonStr = raw;
+        }
+
+        const parsed = JSON.parse(jsonStr);
+        applyImportedData(parsed);
+        document.getElementById('import-code-area').value = '';
+      } catch (err) {
+        alert('共有コードの形式が不正です。コピーしたコードを正確に貼り付けてください。');
+      }
+    }
+
+    function applyImportedData(data) {
+      if (!data) return;
+
+      let importedCount = 0;
+
+      // 1. Chars マージ
+      if (Array.isArray(data.chars) && data.chars.length > 0) {
+        data.chars.forEach(item => {
+          if (!charList.some(existing => existing.id === item.id)) {
+            charList.push(item);
+          }
+        });
+        localStorage.setItem('zzz_custom_chars', JSON.stringify(charList));
+        renderCharSelectOptions();
+        renderCustomCharList();
+        importedCount++;
+      }
+
+      // 2. W-Engines マージ
+      if (Array.isArray(data.wengines) && data.wengines.length > 0) {
+        data.wengines.forEach(item => {
+          if (!wengineList.some(existing => existing.id === item.id)) {
+            wengineList.push(item);
+          }
+        });
+        localStorage.setItem('zzz_custom_wengines', JSON.stringify(wengineList));
+        renderWEngineSelectOptions();
+        renderCustomWEngineList();
+        importedCount++;
+      }
+
+      // 3. Disk Sets マージ
+      if (Array.isArray(data.diskSets) && data.diskSets.length > 0) {
+        data.diskSets.forEach(item => {
+          if (!diskSets.some(existing => existing.id === item.id)) {
+            diskSets.push(item);
+          }
+        });
+        localStorage.setItem('zzz_custom_disk_sets', JSON.stringify(diskSets));
+        renderDiskSlots();
+        renderCustomDiskList();
+        importedCount++;
+      }
+
+      // 4. Builds マージ
+      if (Array.isArray(data.builds) && data.builds.length > 0) {
+        data.builds.forEach(item => {
+          if (!savedBuilds.some(existing => existing.id === item.id)) {
+            savedBuilds.push(item);
+          }
+        });
+        localStorage.setItem('zzz_saved_build_list', JSON.stringify(savedBuilds));
+        renderSavedBuildsList();
+        importedCount++;
+      }
+
+      calculate();
+      closeShareModal();
+      showToast('データの読み込み・統合が完了しました！');
+    }
+
     function resetAll() {
       if (!confirm('入力内容を初期状態にリセットしますか？')) return;
       applyCharPreset('char_miyabi');
@@ -1614,6 +1824,8 @@
     }
 
     // --- MODALS & TOAST UTILS ---
+    function openShareModal() { document.getElementById('modal-share').classList.remove('hidden'); }
+    function closeShareModal() { document.getElementById('modal-share').classList.add('hidden'); }
     function openLoadBuildModal() { document.getElementById('modal-load-build').classList.remove('hidden'); renderSavedBuildsList(); }
     function closeLoadBuildModal() { document.getElementById('modal-load-build').classList.add('hidden'); }
     function openCharModal() { document.getElementById('modal-char').classList.remove('hidden'); }
